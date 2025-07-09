@@ -20,68 +20,6 @@
   padding: 0 2rem;
 }
 
-.navbar-logo {
-  position: absolute;
-  left: 2rem;
-}
-
-.logo {
-  text-decoration: none;
-  color: white;
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 1.8rem;
-  font-weight: 800;
-  letter-spacing: 2px;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-  transition: all 0.3s ease;
-}
-
-.logo:hover {
-  transform: scale(1.05);
-  color: #5bb4e5;
-}
-
-.logo-icon {
-  position: relative;
-  width: 35px;
-  height: 25px;
-  display: flex;
-  align-items: center;
-}
-
-.mini-circle {
-  position: absolute;
-  border-radius: 50%;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-}
-
-.mini-circle.circle-1 {
-  width: 18px;
-  height: 18px;
-  background: linear-gradient(135deg, #4785c4 0%, #5bb4e5 100%);
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.mini-circle.circle-2 {
-  width: 15px;
-  height: 15px;
-  background: linear-gradient(135deg, #1e4b87 0%, #4785c4 100%);
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-}
-
-.logo-text {
-  background: linear-gradient(135deg, #ffffff 0%, #e3f2fd 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 .menu-toggle {
   background: none;
   border: none;
@@ -214,8 +152,7 @@
   font-size: 0.95rem;
   font-weight: 600;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: absolute;
-  right: 2rem;
+  margin-left: auto;
   backdrop-filter: blur(10px);
 }
 
@@ -239,30 +176,7 @@
 @media (max-width: 768px) {
   .navbar-container {
     padding: 0 1rem;
-  }
-
-  .navbar-logo {
-    position: static;
-  }
-
-  .logo {
-    font-size: 1.5rem;
-    gap: 8px;
-  }
-
-  .logo-icon {
-    width: 30px;
-    height: 20px;
-  }
-
-  .mini-circle.circle-1 {
-    width: 15px;
-    height: 15px;
-  }
-
-  .mini-circle.circle-2 {
-    width: 12px;
-    height: 12px;
+    justify-content: space-between;
   }
 
   .nav-list {
@@ -305,9 +219,9 @@
   }
 
   .logout-btn {
-    position: static;
     margin-top: 20px;
     width: 90%;
+    margin-left: 0;
   }
 
   .menu-toggle {
@@ -337,14 +251,6 @@
 @media (max-width: 1200px) {
   .navbar-container {
     padding: 0 1.5rem;
-  }
-
-  .logo {
-    left: 1.5rem;
-  }
-
-  .logout-btn {
-    right: 1.5rem;
   }
 
   .nav-list {

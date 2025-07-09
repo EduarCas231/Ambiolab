@@ -27,130 +27,9 @@ body {
   animation: fadeIn 1s ease-in;
 }
 
-/* Pantalla de carga */
-.loading-screen {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background: white;
-}
 
-.loading-bubbles {
-  display: flex;
-  gap: 20px;
-}
 
-.loading-bubble {
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  animation: bounce 1s infinite alternate;
-}
 
-.loading-bubble:nth-child(1) {
-  background-color: #4785c4;
-  animation-delay: 0s;
-}
-
-.loading-bubble:nth-child(2) {
-  background-color: #1e4b87;
-  animation-delay: 0.15s;
-}
-
-.loading-bubble:nth-child(3) {
-  background-color: #4785c4;
-  animation-delay: 0.3s;
-}
-
-.loading-bubble:nth-child(4) {
-  background-color: #5bb4e5;
-  animation-delay: 0.45s;
-}
-
-/* Logo LABSA */
-.labsa-logo-container {
-  display: inline-block;
-  width: 300px;
-  height: 220px;
-  margin: 20px auto;
-  text-align: center;
-}
-
-.labsa-logo-symbol {
-  position: relative;
-  width: 250px;
-  height: 160px;
-  margin: 0 auto;
-}
-
-.labsa-circle {
-  position: absolute;
-  border-radius: 50%;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-  transition: transform 0.6s ease-out, opacity 0.6s ease-out;
-}
-
-.circle-1 {
-  width: 80px;
-  height: 80px;
-  background-color: #4785c4;
-  top: 30px;
-  left: 20px;
-}
-
-.circle-2 {
-  width: 90px;
-  height: 90px;
-  background-color: #1e4b87;
-  top: 55px;
-  left: 70px;
-  transition-delay: 0.1s;
-}
-
-.circle-3 {
-  width: 85px;
-  height: 85px;
-  background-color: #4785c4;
-  top: 20px;
-  left: 120px;
-  transition-delay: 0.2s;
-}
-
-.circle-4 {
-  width: 80px;
-  height: 80px;
-  background-color: #5bb4e5;
-  top: 60px;
-  left: 160px;
-  transition-delay: 0.3s;
-}
-
-.labsa-shadow {
-  position: absolute;
-  width: 220px;
-  height: 20px;
-  background: radial-gradient(ellipse, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0) 70%);
-  bottom: 0;
-  left: 15px;
-  border-radius: 50%;
-  transition: all 0.6s ease-out;
-  transition-delay: 0.4s;
-}
-
-.labsa-text {
-  font-size: 48px;
-  font-weight: bold;
-  color: #1e4b87;
-  letter-spacing: 3px;
-  text-align: center;
-  margin-top: 15px;
-  opacity: 0;
-  transform: translateY(20px);
-  transition: all 0.6s ease-out;
-  transition-delay: 0.8s;
-  text-shadow: 1px 1px 3px rgba(0,0,0,0.1);
-}
 
 /* Contenedor principal */
 .app-container {
@@ -168,8 +47,9 @@ body {
 
 .logo-container {
   text-align: center;
-  margin: 40px 0;
-  padding: 20px;
+  margin: 20px auto;
+  padding: 10px;
+  max-width: 300px;
 }
 
 .title-container {
@@ -462,6 +342,12 @@ body {
 }
 
 /* Responsive Design */
+@media (max-width: 1200px) {
+  .logo-container {
+    max-width: 280px;
+  }
+}
+
 @media (max-width: 992px) {
   .main-title {
     font-size: 1.8rem;
@@ -474,6 +360,10 @@ body {
   .about-text {
     font-size: 1.1rem;
   }
+  
+  .logo-container {
+    max-width: 260px;
+  }
 }
 
 @media (max-width: 768px) {
@@ -485,19 +375,10 @@ body {
     font-size: 1rem;
   }
   
-  /* Logo responsive */
-  .labsa-logo-container {
-    width: 250px;
-    height: 180px;
-  }
-  
-  .labsa-logo-symbol {
-    width: 200px;
-    height: 130px;
-  }
-  
-  .labsa-text {
-    font-size: 36px;
+  .logo-container {
+    margin: 15px auto;
+    padding: 10px;
+    max-width: 240px;
   }
   
   /* Timeline responsive */
@@ -541,18 +422,10 @@ body {
 }
 
 @media (max-width: 576px) {
-  .labsa-logo-container {
-    width: 220px;
-    height: 160px;
-  }
-  
-  .labsa-logo-symbol {
-    width: 180px;
-    height: 110px;
-  }
-  
-  .labsa-text {
-    font-size: 32px;
+  .logo-container {
+    margin: 10px auto;
+    padding: 8px;
+    max-width: 220px;
   }
   
   .main-title {
@@ -586,18 +459,10 @@ body {
 }
 
 @media (max-width: 400px) {
-  .labsa-logo-container {
-    width: 200px;
-    height: 140px;
-  }
-  
-  .labsa-logo-symbol {
-    width: 160px;
-    height: 100px;
-  }
-  
-  .labsa-text {
-    font-size: 28px;
+  .logo-container {
+    margin: 8px auto;
+    padding: 5px;
+    max-width: 200px;
   }
   
   .main-title {

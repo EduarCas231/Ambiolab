@@ -108,17 +108,6 @@ const NavBar = () => {
   return (
     <nav className="navbar">
       <div className="navbar-container">
-        {/* Logo */}
-        <div className="navbar-logo">
-          <Link to="/home" className="logo">
-            <div className="logo-icon">
-              <div className="mini-circle circle-1"></div>
-              <div className="mini-circle circle-2"></div>
-            </div>
-            <span className="logo-text">LABSA</span>
-          </Link>
-        </div>
-
         {/* Botón menú móvil */}
         {isMobile && (
           <button className="menu-toggle" onClick={toggleMenu}>

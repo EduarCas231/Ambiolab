@@ -6,34 +6,7 @@ import NavBar from '../navigation/NavBar';
 import LabsaLogo from '../components/LabsaLogo';
 import '../styles/Home.css';
 
-// Componente Home con animación de carga
 const Home = () => {
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setLoading(false);
-    }, 1500);
-    
-    return () => clearTimeout(timer);
-  }, []);
-
-  if (loading) {
-    return (
-      <div className="loading-screen">
-        <div className="loading-bubbles">
-          {[...Array(4)].map((_, i) => (
-            <div 
-              key={i} 
-              className="loading-bubble" 
-              style={{ animationDelay: `${i * 0.15}s` }}
-            ></div>
-          ))}
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="app-container">
       <NavBar />
