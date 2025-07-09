@@ -1,6 +1,6 @@
 // src/pages/Login.jsx
 import React, { useState } from "react";
-import AmbiolabLogo from "../components/AmbiolabLogo";
+import LabsaLogo from "../components/LabsaLogo";
 import { useNavigate } from "react-router-dom";
 import "../styles/Login.css";
 import API from "../config/api";
@@ -71,7 +71,7 @@ export default function Login() {
     <div className="login-container">
       <div className="login-card">
         <div className="logo-section">
-          <AmbiolabLogo className="logo" />
+          <LabsaLogo />
           <h2 className="login-title">Iniciar Sesión</h2>
         </div>
 

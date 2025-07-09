@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, NavLink, useLocation } from 'react-router-dom';
 import './NavBar.css';
 import API from '../config/api';
-import { FiBell } from 'react-icons/fi';
+import { FaHome, FaList, FaQrcode, FaBars, FaTimes } from 'react-icons/fa';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -11,6 +11,7 @@ const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [userTipo, setUserTipo] = useState(localStorage.getItem("tipo"));
   const [notificacionesCount, setNotificacionesCount] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   // Determina si estamos en la página de inicio
   const isHomePage = location.pathname === '/home';
@@ -69,6 +70,13 @@ const NavBar = () => {
   }, []);
 
   useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+      if (window.innerWidth >= 768) {
+        setIsMenuOpen(false);
+      }
+    };
+
     const handleScroll = () => {
       // Solo aplica scroll effect en home
       if (isHomePage) {
@@ -76,8 +84,12 @@ const NavBar = () => {
       }
     };
     
+    window.addEventListener('resize', handleResize);
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('scroll', handleScroll);
+    };
   }, [isHomePage]);
 
   const handleLogout = async () => {
@@ -89,77 +101,109 @@ const NavBar = () => {
     }
   };
 
+  const toggleMenu = () => {
+    setIsMenuOpen(!isMenuOpen);
+  };
+
   return (
-    <nav className={`navbar ${isHomePage ? (scrolled ? 'scrolled' : 'transparent') : 'solid'}`}>
-      <div className="navbar-content">
-        {/* Contenedor izquierdo con logo y enlaces */}
-        <div className="navbar-left">
-          <div>
-            <Link to="/home" className="logo">
-              <span className="logo-text">AMBIOLAB</span>
-            </Link>
-          </div>
-          <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
-            <NavLink 
-              to="/home" 
-              className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
-              end
-            >
-              Inicio
-            </NavLink>
-            {(userTipo === '1' || userTipo === 1) && (
-  <>
-    <NavLink 
-      to="/pedidos" 
-      className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
-    >
-      Pedidos
-    </NavLink>
-    <NavLink 
-      to="/news" 
-      className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
-    >
-      Eventos
-    </NavLink>
-    <NavLink 
-      to="/visitas" 
-      className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
-    >
-      <span className="nav-item-content">
-        Visitas
-        {notificacionesCount > 0 && (
-          <span className="notification-badge">{notificacionesCount}</span>
-        )}
-      </span>
-    </NavLink>
-    <NavLink
-      to="/escaner"
-      className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
-    >
-      Escaner
-    </NavLink>
-  </>
-)}
-            <button onClick={handleLogout} className="logout-btn mobile-logout">
-              Cerrar Sesión
-            </button>
-          </div>
+    <nav className="navbar">
+      <div className="navbar-container">
+        {/* Logo */}
+        <div className="navbar-logo">
+          <Link to="/home" className="logo">
+            <div className="logo-icon">
+              <div className="mini-circle circle-1"></div>
+              <div className="mini-circle circle-2"></div>
+            </div>
+            <span className="logo-text">LABSA</span>
+          </Link>
         </div>
 
-        {/* Contenedor derecho con botón de logout */}
-        <div className="navbar-right">
+        {/* Botón menú móvil */}
+        {isMobile && (
+          <button className="menu-toggle" onClick={toggleMenu}>
+            {isMenuOpen ? <FaTimes /> : <FaBars />}
+            <span>Menú</span>
+          </button>
+        )}
+        
+        {/* Enlaces de navegación */}
+        <ul className={`nav-list ${isMobile ? (isMenuOpen ? 'active' : '') : ''}`}>
+          <li className="nav-item">
+            <NavLink 
+              to="/home" 
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+              onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+              end
+            >
+              <FaHome className="nav-icon" />
+              <span>Inicio</span>
+            </NavLink>
+          </li>
+          {(userTipo === '1' || userTipo === 1) && (
+            <>
+              <li className="nav-item">
+                <NavLink 
+                  to="/pedidos" 
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+                >
+                  <FaList className="nav-icon" />
+                  <span>Pedidos</span>
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink 
+                  to="/news" 
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+                >
+                  <FaList className="nav-icon" />
+                  <span>Eventos</span>
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink 
+                  to="/visitas" 
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+                >
+                  <FaList className="nav-icon" />
+                  <span className="nav-item-content">
+                    Visitas
+                    {notificacionesCount > 0 && (
+                      <span className="notification-badge">{notificacionesCount}</span>
+                    )}
+                  </span>
+                </NavLink>
+              </li>
+              <li className="nav-item">
+                <NavLink
+                  to="/escaner"
+                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                  onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+                >
+                  <FaQrcode className="nav-icon" />
+                  <span>Escaner</span>
+                </NavLink>
+              </li>
+            </>
+          )}
+          {isMobile && (
+            <li className="nav-item">
+              <button onClick={handleLogout} className="logout-btn mobile-logout">
+                Cerrar Sesión
+              </button>
+            </li>
+          )}
+        </ul>
+
+        {/* Botón logout desktop */}
+        {!isMobile && (
           <button onClick={handleLogout} className="logout-btn desktop-logout">
             <span className="logout-text">Cerrar Sesión</span>
           </button>
-          
-          <button 
-            className="menu-toggle"
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            aria-label="Toggle menu"
-          >
-            <span className={`hamburger ${isMenuOpen ? 'open' : ''}`}></span>
-          </button>
-        </div>
+        )}
       </div>
     </nav>
   );
