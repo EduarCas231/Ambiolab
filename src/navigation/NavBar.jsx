@@ -129,7 +129,7 @@ const NavBar = () => {
               <span>Inicio</span>
             </NavLink>
           </li>
-          {(userTipo === '1' || userTipo === 1) && (
+          {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2) && (
             <>
               <li className="nav-item">
                 <NavLink 
@@ -138,44 +138,48 @@ const NavBar = () => {
                   onClick={() => { if (isMobile) setIsMenuOpen(false); }}
                 >
                   <FaList className="nav-icon" />
-                  <span>Pedidos</span>
+                  <span>Semaforo</span>
                 </NavLink>
               </li>
-              <li className="nav-item">
-                <NavLink 
-                  to="/news" 
-                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                  onClick={() => { if (isMobile) setIsMenuOpen(false); }}
-                >
-                  <FaList className="nav-icon" />
-                  <span>Eventos</span>
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink 
-                  to="/visitas" 
-                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                  onClick={() => { if (isMobile) setIsMenuOpen(false); }}
-                >
-                  <FaList className="nav-icon" />
-                  <span className="nav-item-content">
-                    Visitas
-                    {notificacionesCount > 0 && (
-                      <span className="notification-badge">{notificacionesCount}</span>
-                    )}
-                  </span>
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink
-                  to="/escaner"
-                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                  onClick={() => { if (isMobile) setIsMenuOpen(false); }}
-                >
-                  <FaQrcode className="nav-icon" />
-                  <span>Escaner</span>
-                </NavLink>
-              </li>
+              {(userTipo === '1' || userTipo === 1) && (
+                <>
+                  <li className="nav-item">
+                    <NavLink 
+                      to="/news" 
+                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                      onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+                    >
+                      <FaList className="nav-icon" />
+                      <span>Eventos</span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink 
+                      to="/visitas" 
+                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                      onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+                    >
+                      <FaList className="nav-icon" />
+                      <span className="nav-item-content">
+                        Visitas
+                        {notificacionesCount > 0 && (
+                          <span className="notification-badge">{notificacionesCount}</span>
+                        )}
+                      </span>
+                    </NavLink>
+                  </li>
+                  <li className="nav-item">
+                    <NavLink
+                      to="/escaner"
+                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                      onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+                    >
+                      <FaQrcode className="nav-icon" />
+                      <span>Escaner</span>
+                    </NavLink>
+                  </li>
+                </>
+              )}
             </>
           )}
           {isMobile && (
