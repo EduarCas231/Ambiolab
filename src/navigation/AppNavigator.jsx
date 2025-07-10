@@ -31,6 +31,13 @@ function AdminRoute({ children }) {
   return token && tipo === '1' ? children : <Navigate to="/home" replace />;
 }
 
+// Ruta para usuarios tipo 1 y 2 (admin y operador)
+function AdminOperatorRoute({ children }) {
+  const token = localStorage.getItem('token');
+  const tipo = localStorage.getItem('tipo');
+  return token && (tipo === '1' || tipo === '2') ? children : <Navigate to="/home" replace />;
+}
+
 export default function AppNavigator() {
   return (
     <Routes>
@@ -51,28 +58,38 @@ export default function AppNavigator() {
       <Route
         path="/edits/:id"
         element={
-          <PrivateRoute>
+          <AdminOperatorRoute>
             <EditI />
-          </PrivateRoute>
+          </AdminOperatorRoute>
         }
       />
       <Route
         path="/registroS"
         element={
-          <PrivateRoute>
+          <AdminOperatorRoute>
             <RegistroS />
-          </PrivateRoute>
+          </AdminOperatorRoute>
         }
       />
-      {/* Rutas privadas solo para tipo 1 */}
+      <Route
+        path="/registros"
+        element={
+          <AdminOperatorRoute>
+            <RegistroS />
+          </AdminOperatorRoute>
+        }
+      />
+      {/* Rutas privadas para tipo 1 y 2 */}
       <Route
         path="/pedidos"
         element={
-          <AdminRoute>
+          <AdminOperatorRoute>
             <Pedidos />
-          </AdminRoute>
+          </AdminOperatorRoute>
         }
       />
+
+      {/* Rutas privadas solo para tipo 1 */}
 
       <Route
         path="/News"
