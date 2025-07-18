@@ -11,10 +11,10 @@ import News from '../pages/News';
 import NewR from '../pages/new/NewR';
 import EditN from '../pages/new/EditN';
 import Visitas from '../pages/visitas/Visitas'
-import Detalles from '../pages/visitas/DetallesV'; 
+import Detalles from '../pages/visitas/DetallesV';
 import Editar from '../pages/visitas/EditarV';
 import Escaner from '../pages/visitas/Escaner';
-import Registros from '../pages/visitas/RegistrosV'; 
+import Registros from '../pages/visitas/RegistrosV';
 
 // Verifica si el usuario tiene token
 const isAuthenticated = () => !!localStorage.getItem('token');
@@ -38,6 +38,13 @@ function AdminOperatorRoute({ children }) {
   return token && (tipo === '1' || tipo === '2') ? children : <Navigate to="/home" replace />;
 }
 
+function AdminOrScannerRoute({ children }) {
+  const token = localStorage.getItem('token');
+  const tipo = localStorage.getItem('tipo');
+  return token && (tipo === '1' || tipo === '3') ? children : <Navigate to="/home" replace />;
+}
+
+
 export default function AppNavigator() {
   return (
     <Routes>
@@ -47,13 +54,13 @@ export default function AppNavigator() {
       <Route path="/contra" element={<Contra />} />
 
       {/* Rutas privadas normales */}
-      <Route 
-        path="/home" 
+      <Route
+        path="/home"
         element={
           <PrivateRoute>
             <Home />
           </PrivateRoute>
-        } 
+        }
       />
       <Route
         path="/edits/:id"
@@ -108,7 +115,7 @@ export default function AppNavigator() {
           </AdminRoute>
         }
       />
-      
+
       <Route
         path="/EditN"
         element={
@@ -117,7 +124,7 @@ export default function AppNavigator() {
           </AdminRoute>
         }
       />
-      
+
       <Route
         path="/EditN/:id"
         element={
@@ -153,11 +160,12 @@ export default function AppNavigator() {
       <Route
         path="/escaner"
         element={
-          <AdminRoute>
+          <AdminOrScannerRoute>
             <Escaner />
-          </AdminRoute>
+          </AdminOrScannerRoute>
         }
       />
+
       <Route
         path="/registrosV"
         element={

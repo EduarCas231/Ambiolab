@@ -36,7 +36,7 @@ const NavBar = () => {
         }
 
         const data = await response.json();
-        
+
         // Convertir a string para asegurar la comparación correcta
         setUserTipo(String(data.tipo));
       } catch (error) {
@@ -63,7 +63,7 @@ const NavBar = () => {
     };
 
     checkNotifications();
-    
+
     // Verificar cada 10 segundos
     const interval = setInterval(checkNotifications, 10000);
     return () => clearInterval(interval);
@@ -83,7 +83,7 @@ const NavBar = () => {
         setScrolled(window.scrollY > 10);
       }
     };
-    
+
     window.addEventListener('resize', handleResize);
     window.addEventListener('scroll', handleScroll);
     return () => {
@@ -115,12 +115,12 @@ const NavBar = () => {
             <span>Menú</span>
           </button>
         )}
-        
+
         {/* Enlaces de navegación */}
         <ul className={`nav-list ${isMobile ? (isMenuOpen ? 'active' : '') : ''}`}>
           <li className="nav-item">
-            <NavLink 
-              to="/home" 
+            <NavLink
+              to="/home"
               className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
               onClick={() => { if (isMobile) setIsMenuOpen(false); }}
               end
@@ -129,11 +129,11 @@ const NavBar = () => {
               <span>Inicio</span>
             </NavLink>
           </li>
-          {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2) && (
+          {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2 ) && (
             <>
               <li className="nav-item">
-                <NavLink 
-                  to="/pedidos" 
+                <NavLink
+                  to="/pedidos"
                   className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                   onClick={() => { if (isMobile) setIsMenuOpen(false); }}
                 >
@@ -144,8 +144,8 @@ const NavBar = () => {
               {(userTipo === '1' || userTipo === 1) && (
                 <>
                   <li className="nav-item">
-                    <NavLink 
-                      to="/news" 
+                    <NavLink
+                      to="/news"
                       className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                       onClick={() => { if (isMobile) setIsMenuOpen(false); }}
                     >
@@ -154,8 +154,8 @@ const NavBar = () => {
                     </NavLink>
                   </li>
                   <li className="nav-item">
-                    <NavLink 
-                      to="/visitas" 
+                    <NavLink
+                      to="/visitas"
                       className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                       onClick={() => { if (isMobile) setIsMenuOpen(false); }}
                     >
@@ -168,20 +168,25 @@ const NavBar = () => {
                       </span>
                     </NavLink>
                   </li>
-                  <li className="nav-item">
-                    <NavLink
-                      to="/escaner"
-                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                      onClick={() => { if (isMobile) setIsMenuOpen(false); }}
-                    >
-                      <FaQrcode className="nav-icon" />
-                      <span>Escaner</span>
-                    </NavLink>
-                  </li>
                 </>
               )}
             </>
           )}
+
+          {/* Agregado: escáner solo para tipo 3 */}
+          {(userTipo === '3' || userTipo === 3) && (
+            <li className="nav-item">
+              <NavLink
+                to="/escaner"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+              >
+                <FaQrcode className="nav-icon" />
+                <span>Escaner</span>
+              </NavLink>
+            </li>
+          )}
+
           {isMobile && (
             <li className="nav-item">
               <button onClick={handleLogout} className="logout-btn mobile-logout">
