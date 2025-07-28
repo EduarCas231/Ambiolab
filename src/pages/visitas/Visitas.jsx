@@ -231,7 +231,6 @@ const Visitas = () => {
         <div className="dashboard-header">
           <div className="header-title">
             <h1>Registro de Visitas</h1>
-            <p>Administra y revisa el historial de visitas</p>
           </div>
           <div className="header-actions">
             {notificaciones.filter(n => !n.leida).length > 0 && (
