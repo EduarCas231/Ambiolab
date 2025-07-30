@@ -39,6 +39,7 @@ const NavBar = () => {
 
         // Convertir a string para asegurar la comparación correcta
         setUserTipo(String(data.tipo));
+        localStorage.setItem('tipo', String(data.tipo));
       } catch (error) {
         localStorage.clear();
         navigate('/login', { replace: true });
@@ -129,52 +130,55 @@ const NavBar = () => {
               <span>Inicio</span>
             </NavLink>
           </li>
-          {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2 ) && (
-            <>
-              <li className="nav-item">
-                <NavLink
-                  to="/pedidos"
-                  className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                  onClick={() => { if (isMobile) setIsMenuOpen(false); }}
-                >
-                  <FaList className="nav-icon" />
-                  <span>Semaforo</span>
-                </NavLink>
-              </li>
-              {(userTipo === '1' || userTipo === 1) && (
-                <>
-                  <li className="nav-item">
-                    <NavLink
-                      to="/news"
-                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                      onClick={() => { if (isMobile) setIsMenuOpen(false); }}
-                    >
-                      <FaList className="nav-icon" />
-                      <span>Eventos</span>
-                    </NavLink>
-                  </li>
-                  <li className="nav-item">
-                    <NavLink
-                      to="/visitas"
-                      className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                      onClick={() => { if (isMobile) setIsMenuOpen(false); }}
-                    >
-                      <FaList className="nav-icon" />
-                      <span className="nav-item-content">
-                        Visitas
-                        {notificacionesCount > 0 && (
-                          <span className="notification-badge">{notificacionesCount}</span>
-                        )}
-                      </span>
-                    </NavLink>
-                  </li>
-                </>
-              )}
-            </>
+          {/* Semáforo: tipos 1, 2 y 3 */}
+          {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2 || userTipo === '3' || userTipo === 3) && (
+            <li className="nav-item">
+              <NavLink
+                to="/pedidos"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+              >
+                <FaList className="nav-icon" />
+                <span>Semaforo</span>
+              </NavLink>
+            </li>
           )}
 
-          {/* Agregado: escáner solo para tipo 3 */}
-          {(userTipo === '3' || userTipo === 3) && (
+          {/* Eventos: tipos 1 y 2 (admin y operadores) */}
+          {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2) && (
+            <li className="nav-item">
+              <NavLink
+                to="/news"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+              >
+                <FaList className="nav-icon" />
+                <span>Eventos</span>
+              </NavLink>
+            </li>
+          )}
+
+          {/* Visitas: tipos 1, 2, 3 y 4 */}
+          {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2 || userTipo === '3' || userTipo === 3 || userTipo === '4' || userTipo === 4) && (
+            <li className="nav-item">
+              <NavLink
+                to="/visitas"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+              >
+                <FaList className="nav-icon" />
+                <span className="nav-item-content">
+                  Visitas
+                  {notificacionesCount > 0 && (
+                    <span className="notification-badge">{notificacionesCount}</span>
+                  )}
+                </span>
+              </NavLink>
+            </li>
+          )}
+
+          {/* Escáner: tipos 1 y 5 */}
+          {(userTipo === '1' || userTipo === 1 || userTipo === '5' || userTipo === 5) && (
             <li className="nav-item">
               <NavLink
                 to="/escaner"

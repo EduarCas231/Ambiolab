@@ -12,6 +12,7 @@ const Visitas = () => {
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [notificaciones, setNotificaciones] = useState([]);
+  const [activeTab, setActiveTab] = useState('activos');
   const visitsPerPage = 10;
 
   
@@ -178,6 +179,10 @@ const Visitas = () => {
     }
   };
 
+  // Calcular contadores
+  const visitasActivas = visitas.filter(v => !v.escaneado).length;
+  const visitasHistorial = visitas.filter(v => v.escaneado).length;
+
   const visitasFiltradas = visitas.filter((visita) => {
     const nombreCompleto = `${visita.nombre} ${visita.apellidoPaterno} ${visita.apellidoMaterno}`.toLowerCase();
     const horaVisita = visita.hora?.substring(0, 5) || '';
@@ -186,8 +191,11 @@ const Visitas = () => {
     const filtroHoraOk = horaVisita.includes(filtroHora.trim());
     const filtroDepartamentoOk = visita.departamento?.toLowerCase().includes(filtroDepartamento.trim().toLowerCase()) ?? true;
     const filtroFechaOk = filtroFecha ? visita.dia === filtroFecha : true;
+    
+    // Filtrar por pestaña activa
+    const tabFilter = activeTab === 'activos' ? !visita.escaneado : visita.escaneado;
 
-    return filtroNombreOk && filtroHoraOk && filtroDepartamentoOk && filtroFechaOk;
+    return filtroNombreOk && filtroHoraOk && filtroDepartamentoOk && filtroFechaOk && tabFilter;
   });
 
   
@@ -231,6 +239,26 @@ const Visitas = () => {
         <div className="dashboard-header">
           <div className="header-title">
             <h1>Registro de Visitas</h1>
+            <div className="tabs-container">
+              <button 
+                className={`tab-btn ${activeTab === 'activos' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab('activos');
+                  setCurrentPage(1);
+                }}
+              >
+                Activos ({visitasActivas})
+              </button>
+              <button 
+                className={`tab-btn ${activeTab === 'historial' ? 'active' : ''}`}
+                onClick={() => {
+                  setActiveTab('historial');
+                  setCurrentPage(1);
+                }}
+              >
+                Historial ({visitasHistorial})
+              </button>
+            </div>
           </div>
           <div className="header-actions">
             {notificaciones.filter(n => !n.leida).length > 0 && (
@@ -263,7 +291,7 @@ const Visitas = () => {
         </div>
 
         <div className="stats-badge">
-          <span>{visitasFiltradas.length} visitas encontradas</span>
+          <span>{visitasFiltradas.length} visitas {activeTab === 'activos' ? 'activas' : 'en historial'}</span>
         </div>
 
         <div className="filters-container">
@@ -347,16 +375,18 @@ const Visitas = () => {
                       </td>
                       <td className="visitas-table-cell visitas-action-cell">
                         <button
-                          className="action-btn edit-btn"
-                          onClick={() => handleEditar(visita.id)}
-                          title="Editar"
+                          className={`action-btn edit-btn ${visita.escaneado ? 'disabled' : ''}`}
+                          onClick={() => !visita.escaneado && handleEditar(visita.id)}
+                          title={visita.escaneado ? "No se puede editar" : "Editar"}
+                          disabled={visita.escaneado}
                         >
                           <FiEdit />
                         </button>
                         <button
-                          className="action-btn delete-btn"
-                          onClick={() => handleBorrar(visita.id)}
-                          title="Eliminar"
+                          className={`action-btn delete-btn ${visita.escaneado ? 'disabled' : ''}`}
+                          onClick={() => !visita.escaneado && handleBorrar(visita.id)}
+                          title={visita.escaneado ? "No se puede eliminar" : "Eliminar"}
+                          disabled={visita.escaneado}
                         >
                           <FiTrash2 />
                         </button>
@@ -424,16 +454,18 @@ const Visitas = () => {
                   </div>
                   <div className="card-actions">
                     <button
-                      className="action-btn edit-btn"
-                      onClick={() => handleEditar(visita.id)}
-                      title="Editar"
+                      className={`action-btn edit-btn ${visita.escaneado ? 'disabled' : ''}`}
+                      onClick={() => !visita.escaneado && handleEditar(visita.id)}
+                      title={visita.escaneado ? "No se puede editar" : "Editar"}
+                      disabled={visita.escaneado}
                     >
                       <FiEdit />
                     </button>
                     <button
-                      className="action-btn delete-btn"
-                      onClick={() => handleBorrar(visita.id)}
-                      title="Eliminar"
+                      className={`action-btn delete-btn ${visita.escaneado ? 'disabled' : ''}`}
+                      onClick={() => !visita.escaneado && handleBorrar(visita.id)}
+                      title={visita.escaneado ? "No se puede eliminar" : "Eliminar"}
+                      disabled={visita.escaneado}
                     >
                       <FiTrash2 />
                     </button>

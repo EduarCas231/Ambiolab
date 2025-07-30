@@ -27,21 +27,36 @@ function PrivateRoute({ children }) {
 // Ruta solo para usuarios tipo 1 (admin)
 function AdminRoute({ children }) {
   const token = localStorage.getItem('token');
-  const tipo = localStorage.getItem('tipo'); // tipo debe guardarse al iniciar sesión
+  const tipo = localStorage.getItem('tipo');
   return token && tipo === '1' ? children : <Navigate to="/home" replace />;
 }
 
-// Ruta para usuarios tipo 1 y 2 (admin y operador)
+// Ruta para usuarios tipo 1 y 2 (admin y operadores)
 function AdminOperatorRoute({ children }) {
   const token = localStorage.getItem('token');
   const tipo = localStorage.getItem('tipo');
   return token && (tipo === '1' || tipo === '2') ? children : <Navigate to="/home" replace />;
 }
 
-function AdminOrScannerRoute({ children }) {
+// Ruta para semáforo: tipos 1, 2 y 3
+function SemaforoRoute({ children }) {
   const token = localStorage.getItem('token');
   const tipo = localStorage.getItem('tipo');
-  return token && (tipo === '1' || tipo === '3') ? children : <Navigate to="/home" replace />;
+  return token && (tipo === '1' || tipo === '2' || tipo === '3') ? children : <Navigate to="/home" replace />;
+}
+
+// Ruta para visitas: tipos 1, 2, 3 y 4
+function VisitasRoute({ children }) {
+  const token = localStorage.getItem('token');
+  const tipo = localStorage.getItem('tipo');
+  return token && (tipo === '1' || tipo === '2' || tipo === '3' || tipo === '4') ? children : <Navigate to="/home" replace />;
+}
+
+// Ruta para escáner: tipos 1 y 5
+function EscanerRoute({ children }) {
+  const token = localStorage.getItem('token');
+  const tipo = localStorage.getItem('tipo');
+  return token && (tipo === '1' || tipo === '5') ? children : <Navigate to="/home" replace />;
 }
 
 
@@ -86,92 +101,91 @@ export default function AppNavigator() {
           </AdminOperatorRoute>
         }
       />
-      {/* Rutas privadas para tipo 1 y 2 */}
+      
       <Route
         path="/pedidos"
         element={
-          <AdminOperatorRoute>
+          <SemaforoRoute>
             <Pedidos />
-          </AdminOperatorRoute>
+          </SemaforoRoute>
         }
       />
 
-      {/* Rutas privadas solo para tipo 1 */}
-
+      {/* Rutas de eventos para tipos 1 y 2 */}
       <Route
         path="/News"
         element={
-          <AdminRoute>
+          <AdminOperatorRoute>
             <News />
-          </AdminRoute>
+          </AdminOperatorRoute>
         }
       />
 
       <Route
         path="/NewR"
         element={
-          <AdminRoute>
+          <AdminOperatorRoute>
             <NewR />
-          </AdminRoute>
+          </AdminOperatorRoute>
         }
       />
 
       <Route
         path="/EditN"
         element={
-          <AdminRoute>
+          <AdminOperatorRoute>
             <EditN />
-          </AdminRoute>
+          </AdminOperatorRoute>
         }
       />
 
       <Route
         path="/EditN/:id"
         element={
-          <AdminRoute>
+          <AdminOperatorRoute>
             <EditN />
-          </AdminRoute>
+          </AdminOperatorRoute>
         }
       />
       <Route
         path="/visitas"
         element={
-          <AdminRoute>
+          <VisitasRoute>
             <Visitas />
-          </AdminRoute>
+          </VisitasRoute>
         }
       />
       <Route
         path="/detalles/:id"
         element={
-          <AdminRoute>
+          <VisitasRoute>
             <Detalles />
-          </AdminRoute>
+          </VisitasRoute>
         }
       />
       <Route
         path="/editar/:id"
         element={
-          <AdminRoute>
+          <VisitasRoute>
             <Editar />
-          </AdminRoute>
+          </VisitasRoute>
         }
       />
       <Route
         path="/escaner"
         element={
-          <AdminOrScannerRoute>
+          <EscanerRoute>
             <Escaner />
-          </AdminOrScannerRoute>
+          </EscanerRoute>
         }
       />
 
       <Route
         path="/registrosV"
         element={
-          <AdminRoute>
+          <VisitasRoute>
             <Registros />
-          </AdminRoute>
+          </VisitasRoute>
         }
       />
 

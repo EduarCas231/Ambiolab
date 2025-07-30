@@ -42,13 +42,48 @@ body {
   font-size: 1.8rem;
   font-weight: 700;
   color: var(--text-color);
-  margin: 0;
+  margin: 0 0 1rem 0;
 }
 
 .header-title p {
   font-size: 0.9rem;
   color: var(--text-light);
   margin: 0.25rem 0 0;
+}
+
+/* Estilos para las pestañas */
+.tabs-container {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.tab-btn {
+  background-color: var(--secondary-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  font-size: 0.9rem;
+}
+
+.tab-btn:hover {
+  background-color: rgba(43, 145, 231, 0.1);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.tab-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.tab-btn.active:hover {
+  background-color: var(--primary-hover);
 }
 
 /* Botones */
@@ -432,6 +467,17 @@ body {
   
   .header-title h1 {
     font-size: 1.5rem;
+  }
+  
+  .tabs-container {
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+  }
+  
+  .tab-btn {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
   }
   
   .filters-container {

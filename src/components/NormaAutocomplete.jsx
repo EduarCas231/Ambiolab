@@ -1,18 +1,11 @@
-import React, { useState, useEffect, useRef } from 'react';
-import '../styles/NormaAutocomplete.css';
+import React, { useState, useEffect } from 'react';
 
 const NormaAutocomplete = ({ value, onChange }) => {
   const [inputValue, setInputValue] = useState(value || '');
-  const [showSuggestions, setShowSuggestions] = useState(false);
-  const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-  const [activeIndex, setActiveIndex] = useState(-1);
   const [showModal, setShowModal] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
-  const wrapperRef = useRef(null);
-  const modalRef = useRef(null);
 
-  // Base de datos de normas organizadas por categorías
   const normasDB = {
     "AGUAS POTABLE - MUESTREO": {
       "NOM-230-SSA1-2002": {
@@ -175,243 +168,221 @@ const NormaAutocomplete = ({ value, onChange }) => {
     }
   };
 
-  // Función para aplanar la estructura jerárquica en una lista de sugerencias
-  const getAllSuggestions = () => {
-    const suggestions = [];
-    
-    // Recorrer categorías principales
-    Object.entries(normasDB).forEach(([categoria, contenido]) => {
-      suggestions.push(categoria);
-      
-      // Recorrer subcategorías o normas
-      Object.entries(contenido).forEach(([subcategoria, items]) => {
-        if (typeof items === 'object' && !Array.isArray(items)) {
-          // Es un objeto con más niveles
-          suggestions.push(`${categoria} - ${subcategoria}`);
-          
-          // Recorrer tablas o secciones
-          Object.entries(items).forEach(([tabla, parametros]) => {
-            suggestions.push(`${categoria} - ${subcategoria} - ${tabla}`);
-            
-            // Recorrer parámetros individuales
-            parametros.forEach(parametro => {
-              suggestions.push(`${parametro}`);
-            });
-          });
-        } else if (Array.isArray(items)) {
-          // Es un array de items
-          suggestions.push(`${categoria} - ${subcategoria}`);
-          items.forEach(item => {
-            suggestions.push(`${item}`);
-          });
-        }
-      });
-    });
-    
-    return suggestions;
-  };
-
-  // Filtrar sugerencias basadas en el input
-  const filterSuggestions = (input) => {
-    const allSuggestions = getAllSuggestions();
-    const filtered = allSuggestions.filter(
-      suggestion => suggestion.toLowerCase().includes(input.toLowerCase())
-    );
-    return filtered.slice(0, 10); // Limitar a 10 sugerencias para mejor rendimiento
-  };
-
-  // Actualizar sugerencias cuando cambia el input
   useEffect(() => {
-    if (inputValue.length > 0) {
-      setFilteredSuggestions(filterSuggestions(inputValue));
-      setShowSuggestions(true);
-    } else {
-      setShowSuggestions(false);
-    }
-  }, [inputValue]);
+    setInputValue(value || '');
+  }, [value]);
 
-  // Manejar clic fuera del componente para cerrar sugerencias
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target)) {
-        setShowSuggestions(false);
-      }
-      if (modalRef.current && !modalRef.current.contains(event.target) && event.target.className !== 'browse-button') {
-        setShowModal(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  // Manejar cambio en el input
   const handleInputChange = (e) => {
-    setInputValue(e.target.value);
-    onChange({ target: { name: 'norma', value: e.target.value } });
-  };
-
-  // Manejar selección de sugerencia
-  const handleSuggestionClick = (suggestion) => {
-    setInputValue(suggestion);
-    onChange({ target: { name: 'norma', value: suggestion } });
-    setShowSuggestions(false);
-    setActiveIndex(-1);
-  };
-
-  // Manejar navegación con teclado
-  const handleKeyDown = (e) => {
-    // Flecha abajo
-    if (e.keyCode === 40 && showSuggestions) {
-      e.preventDefault();
-      setActiveIndex(prevIndex => 
-        prevIndex < filteredSuggestions.length - 1 ? prevIndex + 1 : prevIndex
-      );
-    }
-    // Flecha arriba
-    else if (e.keyCode === 38 && showSuggestions) {
-      e.preventDefault();
-      setActiveIndex(prevIndex => prevIndex > 0 ? prevIndex - 1 : 0);
-    }
-    // Enter
-    else if (e.keyCode === 13 && activeIndex > -1) {
-      e.preventDefault();
-      handleSuggestionClick(filteredSuggestions[activeIndex]);
-    }
-    // Escape
-    else if (e.keyCode === 27) {
-      setShowSuggestions(false);
-      setActiveIndex(-1);
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    if (onChange) {
+      onChange({ target: { name: 'norma', value: newValue } });
     }
   };
 
-  // Abrir modal de navegación
-  const openBrowseModal = () => {
-    setShowModal(true);
+  const selectNorma = (norma) => {
+    setInputValue(norma);
+    if (onChange) {
+      onChange({ target: { name: 'norma', value: norma } });
+    }
+    setShowModal(false);
     setSelectedCategory(null);
     setSelectedSubcategory(null);
   };
 
-  // Seleccionar categoría en el modal
-  const selectCategory = (category) => {
-    setSelectedCategory(category);
-    setSelectedSubcategory(null);
-  };
-
-  // Seleccionar subcategoría en el modal
-  const selectSubcategory = (subcategory) => {
-    setSelectedSubcategory(subcategory);
-  };
-
-  // Seleccionar norma final del modal
-  const selectNorma = (norma) => {
-    setInputValue(norma);
-    onChange({ target: { name: 'norma', value: norma } });
-    setShowModal(false);
-  };
-
   return (
-    <div className="autocomplete-container">
-      <div className="autocomplete-wrapper" ref={wrapperRef}>
-        <input
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          onKeyDown={handleKeyDown}
-          onFocus={() => inputValue && setShowSuggestions(true)}
-          placeholder="Buscar norma o parámetro..."
-          className="autocomplete-input"
-          name="norma"
-        />
-        <button 
-          type="button" 
-          className="browse-button"
-          onClick={openBrowseModal}
-        >
-          Explorar
-        </button>
-        {showSuggestions && filteredSuggestions.length > 0 && (
-          <ul className="suggestions-list">
-            {filteredSuggestions.map((suggestion, index) => (
-              <li
-                key={index}
-                className={index === activeIndex ? 'suggestion-item active' : 'suggestion-item'}
-                onClick={() => handleSuggestionClick(suggestion)}
-              >
-                {suggestion}
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
+    <div style={{ display: 'flex', gap: '10px', width: '100%' }}>
+      <input
+        type="text"
+        value={inputValue}
+        onChange={handleInputChange}
+        placeholder="Escriba o seleccione una norma..."
+        style={{
+          flex: 1,
+          padding: '1rem 1.25rem',
+          border: '2px solid #e5e7eb',
+          borderRadius: '12px',
+          fontSize: '0.95rem',
+          fontFamily: 'inherit',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+          backgroundColor: 'white',
+          color: '#1f2937'
+        }}
+        name="norma"
+      />
+      <button
+        type="button"
+        onClick={() => setShowModal(true)}
+        style={{
+          padding: '1rem 1.5rem',
+          backgroundColor: '#2b91e7',
+          color: 'white',
+          border: 'none',
+          borderRadius: '12px',
+          cursor: 'pointer',
+          fontSize: '0.9rem',
+          fontWeight: '500',
+          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+        }}
+      >
+        Explorar
+      </button>
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="normas-modal" ref={modalRef}>
-            <div className="modal-header">
-              <h3>Seleccionar Norma</h3>
-              <button className="close-button" onClick={() => setShowModal(false)}>×</button>
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          zIndex: 9999
+        }}>
+          <div style={{
+            backgroundColor: 'white',
+            borderRadius: '24px',
+            width: '90%',
+            maxWidth: '800px',
+            maxHeight: '80vh',
+            overflow: 'auto',
+            padding: '2rem',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: '#1f2937' }}>Seleccionar Norma</h3>
+              <button
+                onClick={() => setShowModal(false)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '24px',
+                  cursor: 'pointer',
+                  color: '#6b7280',
+                  padding: '0.5rem'
+                }}
+              >
+                ×
+              </button>
             </div>
-            <div className="modal-content">
-              {!selectedCategory ? (
-                <div className="category-list">
-                  <h4>Categorías</h4>
-                  <ul>
-                    {Object.keys(normasDB).map((category, index) => (
-                      <li key={index} onClick={() => selectCategory(category)}>
-                        {category}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ) : !selectedSubcategory ? (
-                <div className="subcategory-list">
-                  <div className="modal-breadcrumb">
-                    <span onClick={() => setSelectedCategory(null)}>Categorías</span> &gt; {selectedCategory}
+
+            {!selectedCategory ? (
+              <div>
+                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Categorías</h4>
+                {Object.keys(normasDB).map((category, index) => (
+                  <div
+                    key={index}
+                    onClick={() => setSelectedCategory(category)}
+                    style={{
+                      padding: '1rem',
+                      margin: '0.5rem 0',
+                      backgroundColor: '#f9fafb',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      border: '1px solid #e5e7eb'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#f9fafb'}
+                  >
+                    {category}
                   </div>
-                  <h4>Subcategorías</h4>
-                  <ul>
-                    {Object.keys(normasDB[selectedCategory]).map((subcategory, index) => (
-                      <li key={index} onClick={() => selectSubcategory(subcategory)}>
-                        {subcategory}
-                      </li>
-                    ))}
-                  </ul>
+                ))}
+              </div>
+            ) : !selectedSubcategory ? (
+              <div>
+                <div style={{ marginBottom: '1rem', color: '#6b7280', fontSize: '0.9rem' }}>
+                  <span onClick={() => setSelectedCategory(null)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                    Categorías
+                  </span> › {selectedCategory}
                 </div>
-              ) : (
-                <div className="normas-list">
-                  <div className="modal-breadcrumb">
-                    <span onClick={() => setSelectedCategory(null)}>Categorías</span> &gt; 
-                    <span onClick={() => setSelectedSubcategory(null)}> {selectedCategory}</span> &gt; 
-                    {selectedSubcategory}
+                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Subcategorías</h4>
+                {Object.keys(normasDB[selectedCategory]).map((subcategory, index) => (
+                  <div
+                    key={index}
+                    onClick={() => setSelectedSubcategory(subcategory)}
+                    style={{
+                      padding: '1rem',
+                      margin: '0.5rem 0',
+                      backgroundColor: '#f9fafb',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      border: '1px solid #e5e7eb'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#f9fafb'}
+                  >
+                    {subcategory}
                   </div>
-                  <h4>Normas</h4>
-                  <ul>
-                    {Array.isArray(normasDB[selectedCategory][selectedSubcategory]) ? (
-                      normasDB[selectedCategory][selectedSubcategory].map((norma, index) => (
-                        <li key={index} onClick={() => selectNorma(norma)}>
+                ))}
+              </div>
+            ) : (
+              <div>
+                <div style={{ marginBottom: '1rem', color: '#6b7280', fontSize: '0.9rem' }}>
+                  <span onClick={() => setSelectedCategory(null)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                    Categorías
+                  </span> › 
+                  <span onClick={() => setSelectedSubcategory(null)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                    {selectedCategory}
+                  </span> › {selectedSubcategory}
+                </div>
+                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Normas</h4>
+                {Array.isArray(normasDB[selectedCategory][selectedSubcategory]) ? (
+                  normasDB[selectedCategory][selectedSubcategory].map((norma, index) => (
+                    <div
+                      key={index}
+                      onClick={() => selectNorma(norma)}
+                      style={{
+                        padding: '0.75rem',
+                        margin: '0.25rem 0',
+                        backgroundColor: '#f9fafb',
+                        borderRadius: '8px',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s',
+                        border: '1px solid #e5e7eb',
+                        fontSize: '0.9rem'
+                      }}
+                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+                      onMouseLeave={(e) => e.target.style.backgroundColor = '#f9fafb'}
+                    >
+                      {norma}
+                    </div>
+                  ))
+                ) : (
+                  Object.entries(normasDB[selectedCategory][selectedSubcategory]).map(([tabla, normas], index) => (
+                    <div key={index} style={{ marginBottom: '1.5rem' }}>
+                      <div style={{ fontWeight: '600', margin: '1rem 0 0.5rem 0', color: '#374151', fontSize: '1rem' }}>
+                        {tabla}
+                      </div>
+                      {normas.map((norma, idx) => (
+                        <div
+                          key={idx}
+                          onClick={() => selectNorma(norma)}
+                          style={{
+                            padding: '0.75rem',
+                            margin: '0.25rem 0',
+                            marginLeft: '1rem',
+                            backgroundColor: '#f9fafb',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            transition: 'all 0.2s',
+                            borderLeft: '3px solid #2b91e7',
+                            fontSize: '0.85rem'
+                          }}
+                          onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+                          onMouseLeave={(e) => e.target.style.backgroundColor = '#f9fafb'}
+                        >
                           {norma}
-                        </li>
-                      ))
-                    ) : (
-                      Object.entries(normasDB[selectedCategory][selectedSubcategory]).map(([tabla, normas], index) => (
-                        <li key={index}>
-                          <div className="tabla-header">{tabla}</div>
-                          <ul className="tabla-normas">
-                            {normas.map((norma, idx) => (
-                              <li key={idx} onClick={() => selectNorma(norma)}>
-                                {norma}
-                              </li>
-                            ))}
-                          </ul>
-                        </li>
-                      ))
-                    )}
-                  </ul>
-                </div>
-              )}
-            </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
         </div>
       )}
