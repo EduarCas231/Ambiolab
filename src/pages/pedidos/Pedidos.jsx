@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import NavBar from '../../navigation/NavBar';
 import { useNavigate } from 'react-router-dom';
+import LoadingSpinner from '../../components/LoadingSpinner';
 import '../../styles/Pedidos.css';
 import NormaIcon from '../../components/NormaIcon';
 import API from '../../config/api';
@@ -132,11 +133,9 @@ const Pedidos = () => {
   const columnas = ['nombre', 'norma', 'estatus', 'fecha_inicio', 'fecha_final', 'comentario'];
 
   return (
-    <div>
+    <div className="app-layout">
       <NavBar />
-      <br />
-      <br />
-      <br />
+      <div className="content-area">
       <div className="pedidos-container">
         <div className="pedidos-header">
           <h2 className="pedidos-title">Lista de Pedidos</h2>
@@ -158,8 +157,7 @@ const Pedidos = () => {
 
         {initialLoad ? (
           <div className="loading-container">
-            <div className="loading-spinner"></div>
-            <p className="loading-text">Cargando pedidos...</p>
+            <LoadingSpinner message="Cargando pedidos..." />
           </div>
         ) : pedidos.length === 0 ? (
           <p className="pedidos-empty-message">No hay pedidos disponibles.</p>
@@ -318,6 +316,7 @@ const Pedidos = () => {
             </div>
           </>
         )}
+      </div>
       </div>
     </div>
   );

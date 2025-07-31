@@ -1,4 +1,12 @@
 /* Estilos para la página de pedidos */
+.app-layout {
+  min-height: 100vh;
+}
+
+.content-area {
+  padding-top: 80px;
+}
+
 .pedidos-container {
   width: 95%;
   max-width: 1400px;

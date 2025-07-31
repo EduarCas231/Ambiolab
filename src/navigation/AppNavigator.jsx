@@ -15,6 +15,8 @@ import Detalles from '../pages/visitas/DetallesV';
 import Editar from '../pages/visitas/EditarV';
 import Escaner from '../pages/visitas/Escaner';
 import Registros from '../pages/visitas/RegistrosV';
+import Users from '../pages/users/Users';
+import EditUser from '../pages/users/Edituser';
 
 // Verifica si el usuario tiene token
 const isAuthenticated = () => !!localStorage.getItem('token');
@@ -111,7 +113,6 @@ export default function AppNavigator() {
         }
       />
 
-      {/* Rutas de eventos para tipos 1 y 2 */}
       <Route
         path="/News"
         element={
@@ -189,7 +190,24 @@ export default function AppNavigator() {
         }
       />
 
-      {/* Redirigir cualquier otra ruta a login */}
+      <Route
+        path="/users"
+        element={
+          <AdminRoute>
+            <Users />
+          </AdminRoute>
+        } 
+      />
+
+      <Route
+        path="/users/edit/:id"
+        element={
+          <AdminRoute>
+            <EditUser />
+          </AdminRoute>
+        } 
+      />
+
       <Route path="*" element={<Navigate to="/login" replace />} />
     </Routes>
   );

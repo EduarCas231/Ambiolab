@@ -36,6 +36,10 @@ const API = {
     markAllAsRead: `${API_BASE_URL}/notificaciones/read-all`,
     getUnreadCount: `${API_BASE_URL}/notificaciones/unread-count`,
     deleteByVisitaId: (visitaId) => `${API_BASE_URL}/notificaciones/visita/${visitaId}`,
+  },
+  users: {
+    getAll: `${API_BASE_URL}/users`,
+    update: (id) => `${API_BASE_URL}/users/${id}`,
   }
 };
 

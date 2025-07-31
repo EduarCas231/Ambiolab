@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, NavLink, useLocation } from 'react-router-dom';
 import './NavBar.css';
 import API from '../config/api';
-import { FaHome, FaList, FaQrcode, FaBars, FaTimes } from 'react-icons/fa';
+import { FaHome, FaList, FaQrcode, FaBars, FaTimes, FaTrafficLight, FaCalendarAlt, FaUsers, FaUserFriends } from 'react-icons/fa';
 
 const NavBar = () => {
   const navigate = useNavigate();
@@ -130,7 +130,7 @@ const NavBar = () => {
               <span>Inicio</span>
             </NavLink>
           </li>
-          {/* Semáforo: tipos 1, 2 y 3 */}
+        
           {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2 || userTipo === '3' || userTipo === 3) && (
             <li className="nav-item">
               <NavLink
@@ -138,13 +138,13 @@ const NavBar = () => {
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                 onClick={() => { if (isMobile) setIsMenuOpen(false); }}
               >
-                <FaList className="nav-icon" />
+                <FaTrafficLight className="nav-icon" />
                 <span>Semaforo</span>
               </NavLink>
             </li>
           )}
 
-          {/* Eventos: tipos 1 y 2 (admin y operadores) */}
+         
           {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2) && (
             <li className="nav-item">
               <NavLink
@@ -152,13 +152,13 @@ const NavBar = () => {
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                 onClick={() => { if (isMobile) setIsMenuOpen(false); }}
               >
-                <FaList className="nav-icon" />
+                <FaCalendarAlt className="nav-icon" />
                 <span>Eventos</span>
               </NavLink>
             </li>
           )}
 
-          {/* Visitas: tipos 1, 2, 3 y 4 */}
+          
           {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2 || userTipo === '3' || userTipo === 3 || userTipo === '4' || userTipo === 4) && (
             <li className="nav-item">
               <NavLink
@@ -166,7 +166,7 @@ const NavBar = () => {
                 className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
                 onClick={() => { if (isMobile) setIsMenuOpen(false); }}
               >
-                <FaList className="nav-icon" />
+                <FaUserFriends className="nav-icon" />
                 <span className="nav-item-content">
                   Visitas
                   {notificacionesCount > 0 && (
@@ -177,7 +177,7 @@ const NavBar = () => {
             </li>
           )}
 
-          {/* Escáner: tipos 1 y 5 */}
+         
           {(userTipo === '1' || userTipo === 1 || userTipo === '5' || userTipo === 5) && (
             <li className="nav-item">
               <NavLink
@@ -187,6 +187,20 @@ const NavBar = () => {
               >
                 <FaQrcode className="nav-icon" />
                 <span>Escaner</span>
+              </NavLink>
+            </li>
+          )}
+
+
+          {(userTipo === '1' || userTipo === 1) && (
+            <li className='nav-item'>
+              <NavLink
+                to="/users"
+                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+                onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+              >
+                <FaUsers className="nav-icon" />
+                <span>Usuarios</span>
               </NavLink>
             </li>
           )}
