@@ -98,25 +98,62 @@ function Escaner() {
       
       if (visita.escaneado) {
         Swal.fire({
-          title: 'CÓDIGO YA UTILIZADO',
+          title: '⚠️ CÓDIGO YA UTILIZADO',
           html: `
-            <div class="verification-result">
-              <div class="visitor-info">
-                <h4>${visita.nombre} ${visita.apellidoPaterno}</h4>
-                <div class="status-badge-invalid">❌ ACCESO YA REGISTRADO</div>
+            <div class="alert-container already-used">
+              <div class="alert-icon">
+                <div class="warning-circle">
+                  <span>⚠️</span>
+                </div>
               </div>
-              <div class="visita-details">
-                <div class="detail-row"><strong>Departamento:</strong> ${visita.departamento}</div>
-                <div class="detail-row"><strong>Fecha:</strong> ${visita.dia}</div>
-                <div class="detail-row"><strong>Hora:</strong> ${visita.hora?.substring(0, 5)}</div>
-                ${visita.detalle ? `<div class="detail-row"><strong>Motivo de visita:</strong> ${visita.detalle}</div>` : ''}
+              <div class="visitor-card">
+                <div class="visitor-header">
+                  <h3>${visita.nombre} ${visita.apellidoPaterno} ${visita.apellidoMaterno || ''}</h3>
+                  <div class="status-badge invalid">
+                    <span class="status-icon">🚫</span>
+                    ACCESO YA REGISTRADO
+                  </div>
+                </div>
+                <div class="visit-details">
+                  <div class="detail-item">
+                    <span class="detail-label">🏢 Departamento:</span>
+                    <span class="detail-value">${visita.departamento}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">📅 Fecha de visita:</span>
+                    <span class="detail-value">${visita.dia}</span>
+                  </div>
+                  <div class="detail-item">
+                    <span class="detail-label">⏰ Hora programada:</span>
+                    <span class="detail-value">${visita.hora?.substring(0, 5)}</span>
+                  </div>
+                  ${visita.detalle ? `
+                    <div class="detail-item">
+                      <span class="detail-label">📋 Motivo de la visita:</span>
+                      <span class="detail-value">${visita.detalle}</span>
+                    </div>
+                  ` : ''}
+                </div>
+                <div class="alert-message">
+                  <p><strong>Este código QR ya fue escaneado anteriormente</strong></p>
+                  <p class="sub-message">No se permite el acceso duplicado</p>
+                </div>
               </div>
-              <p style="color: #ef4444; margin-top: 10px;"><strong>Este código QR ya fue escaneado anteriormente</strong></p>
             </div>
           `,
-          icon: 'warning',
+          icon: false,
           confirmButtonColor: '#ef4444',
-          confirmButtonText: 'Entendido'
+          confirmButtonText: '✓ Entendido',
+          customClass: {
+            popup: 'custom-alert-popup',
+            confirmButton: 'custom-confirm-btn'
+          },
+          showClass: {
+            popup: 'animate__animated animate__fadeInDown'
+          },
+          hideClass: {
+            popup: 'animate__animated animate__fadeOutUp'
+          }
         }).then(() => {
           setScanning(true);
         });
@@ -128,13 +165,57 @@ function Escaner() {
       
     } catch (error) {
       Swal.fire({
-        title: 'Código no válido',
-        text: error.message,
-        icon: 'error',
+        title: '❌ CÓDIGO NO VÁLIDO',
+        html: `
+          <div class="alert-container invalid-code">
+            <div class="alert-icon">
+              <div class="error-circle">
+                <span>❌</span>
+              </div>
+            </div>
+            <div class="error-content">
+              <h3>Código no reconocido</h3>
+              <div class="error-details">
+                <p class="error-message">${error.message}</p>
+                <div class="suggestions">
+                  <h4>💡 Sugerencias:</h4>
+                  <ul>
+                    <li>Verifica que el código QR esté completo y legible</li>
+                    <li>Asegúrate de que la cámara tenga buena iluminación</li>
+                    <li>Intenta ingresar el código manualmente</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        `,
+        icon: false,
         confirmButtonColor: '#2b91e7',
-        confirmButtonText: 'Reintentar'
-      }).then(() => {
-        setScanning(true);
+        confirmButtonText: '🔄 Reintentar',
+        showCancelButton: true,
+        cancelButtonText: '✏️ Ingreso manual',
+        customClass: {
+          popup: 'custom-alert-popup',
+          confirmButton: 'custom-confirm-btn',
+          cancelButton: 'custom-cancel-btn'
+        },
+        showClass: {
+          popup: 'animate__animated animate__shakeX'
+        }
+      }).then((result) => {
+        if (result.isConfirmed) {
+          setScanning(true);
+        } else if (result.isDismissed) {
+          // Enfocar en el input manual
+          setScanning(true);
+          setTimeout(() => {
+            const manualInput = document.querySelector('.manual-input');
+            if (manualInput) {
+              manualInput.focus();
+              manualInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+          }, 100);
+        }
       });
     }
   };
@@ -284,33 +365,46 @@ function Escaner() {
           ) : (
             <div className="scan-success">
               {showVisitaInfo && currentVisita && (
-                <div className="visita-info-container">
-                  <div className="visita-info-content">
-                    <h3>VISITA VERIFICADA - INGRESO REGISTRADO</h3>
-                    <div className="verification-result">
-                      <div className="visitor-info">
-                        <h4>{currentVisita.nombre} {currentVisita.apellidoPaterno}</h4>
-                        <div className="status-badge">✅ ACCESO AUTORIZADO</div>
-                      </div>
-                      <div className="visita-details">
-                        <div className="detail-row"><strong>Departamento:</strong> {currentVisita.departamento}</div>
-                        <div className="detail-row"><strong>Fecha:</strong> {currentVisita.dia}</div>
-                        <div className="detail-row"><strong>Hora:</strong> {currentVisita.hora?.substring(0, 5)}</div>
-                        {currentVisita.detalle && (
-                          <div className="detail-row"><strong>Motivo de visita:</strong> {currentVisita.detalle}</div>
-                        )}
-                      </div>
+                <div className="minimal-success-card">
+                  <div className="success-check-circle">
+                    <div className="checkmark">
+                      <div className="checkmark-stem"></div>
+                      <div className="checkmark-kick"></div>
                     </div>
+                  </div>
+                  <h2>Acceso Autorizado</h2>
+                  
+                  <div className="visitor-card">
+                    <div className="visitor-name">
+                      {currentVisita.nombre} {currentVisita.apellidoPaterno} {currentVisita.apellidoMaterno || ''}
+                    </div>
+                    <div className="visit-details">
+                      <span><strong>Departamento:</strong> 🏢 {currentVisita.departamento}</span>
+                      <span><strong>Fecha:</strong> 📅 {currentVisita.dia}</span>
+                      <span><strong>Hora:</strong> ⏰ {currentVisita.hora?.substring(0, 5)}</span>
+                    </div>
+                    {currentVisita.detalle && (
+                      <div className="visit-purpose">
+                        <strong>Motivo:</strong> 📋 {currentVisita.detalle}
+                      </div>
+                    )}
+                  </div>
+                  
+                  <div className="welcome-msg">
+                    🎉 ¡Bienvenido a LABSA!<br/>
+                    Favor de pasar al área asignada
                   </div>
                 </div>
               )}
               
-              <div className="scan-actions">
-                <button className="btn-primary" onClick={toggleCamera}>
-                  <FiCamera className="btn-icon" /> Escanear otro código
+              <div className="action-buttons">
+                <button className="scan-btn" onClick={toggleCamera}>
+                  <FiCamera size={18} />
+                  Escanear otro
                 </button>
-                <button className="btn-secondary" onClick={closeVisitaInfo}>
-                  <FiX className="btn-icon" /> Cerrar información
+                <button className="close-btn" onClick={closeVisitaInfo}>
+                  <FiX size={18} />
+                  Cerrar
                 </button>
               </div>
             </div>

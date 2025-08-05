@@ -264,15 +264,53 @@ const Visitas = () => {
             {notificaciones.filter(n => !n.leida).length > 0 && (
               <div className="notifications-container">
                 <button className="notification-btn" onClick={() => {
-                  const notifTexts = notificaciones.filter(n => !n.leida).map(n => n.mensaje).join('\n');
+                  const notifNoLeidas = notificaciones.filter(n => !n.leida);
+                  const notifList = notifNoLeidas.map((n, index) => 
+                    `<div class="notification-item">
+                      <div class="notification-number">${index + 1}</div>
+                      <div class="notification-content">
+                        <div class="notification-message">${n.mensaje}</div>
+                        <div class="notification-time">${(() => {
+                          try {
+                            const fecha = n.fecha_escaneo || n.created_at;
+                            if (!fecha) return 'No disponible';
+                            
+                            const dateObj = new Date(fecha);
+                            if (isNaN(dateObj.getTime())) return 'No disponible';
+                            
+                            // Usar UTC para evitar conversión de zona horaria
+                            const day = dateObj.getUTCDate().toString().padStart(2, '0');
+                            const month = (dateObj.getUTCMonth() + 1).toString().padStart(2, '0');
+                            const year = dateObj.getUTCFullYear();
+                            const hour = dateObj.getUTCHours().toString().padStart(2, '0');
+                            const minute = dateObj.getUTCMinutes().toString().padStart(2, '0');
+                            
+                            return `${day}/${month}/${year} - ${hour}:${minute}`;
+                          } catch (error) {
+                            return 'Fecha no disponible';
+                          }
+                        })()}</div>
+                      </div>
+                    </div>`
+                  ).join('');
+                  
                   Swal.fire({
-                    title: 'Nuevos Ingresos',
-                    text: notifTexts,
-                    icon: 'info',
+                    title: `🔔 Nuevos Ingresos (${notifNoLeidas.length})`,
+                    html: `
+                      <div class="notifications-list">
+                        ${notifList}
+                      </div>
+                    `,
+                    icon: false,
                     confirmButtonColor: '#2b91e7',
                     showCancelButton: true,
-                    confirmButtonText: 'Marcar como leídas',
-                    cancelButtonText: 'Cerrar'
+                    confirmButtonText: '✓ Marcar como leídas',
+                    cancelButtonText: 'Cerrar',
+                    customClass: {
+                      popup: 'notifications-popup',
+                      htmlContainer: 'notifications-html-container'
+                    },
+                    width: '500px'
                   }).then((result) => {
                     if (result.isConfirmed) {
                       limpiarNotificaciones();

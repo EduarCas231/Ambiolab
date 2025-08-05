@@ -451,6 +451,150 @@ body {
   gap: 0.5rem;
 }
 
+/* Estilos para notificaciones */
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.notifications-container {
+  position: relative;
+}
+
+.notification-btn {
+  background-color: var(--warning-color);
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 50%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+  position: relative;
+}
+
+.notification-btn:hover {
+  background-color: #d97706;
+  transform: scale(1.05);
+}
+
+.notification-badge {
+  position: absolute;
+  top: -8px;
+  right: -8px;
+  background-color: var(--danger-color);
+  color: white;
+  border-radius: 50%;
+  width: 20px;
+  height: 20px;
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Estilos para la lista de notificaciones */
+.notifications-popup {
+  border-radius: 12px !important;
+}
+
+.notifications-html-container {
+  padding: 0 !important;
+}
+
+.notifications-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding: 10px 0;
+}
+
+.notification-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background-color 0.2s ease;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-item:hover {
+  background-color: #f8f9fa;
+}
+
+.notification-number {
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: white;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.notification-content {
+  flex: 1;
+  text-align: left;
+}
+
+.notification-message {
+  font-size: 0.9rem;
+  color: #374151;
+  margin-bottom: 4px;
+  line-height: 1.4;
+}
+
+.notification-time {
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Estilos para estados de visitas */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-badge.ingresado {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+}
+
+.status-badge.pendiente {
+  background-color: rgba(107, 114, 128, 0.1);
+  color: var(--text-light);
+  border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+/* Estilos para filas escaneadas */
+.visitas-table-row.escaneada {
+  background-color: rgba(16, 185, 129, 0.05);
+}
+
+.visita-card.escaneada {
+  border-left: 4px solid var(--success-color);
+  background-color: rgba(16, 185, 129, 0.02);
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .dashboard-container {
@@ -518,6 +662,24 @@ body {
   .visitas-cards {
     display: block;
   }
+  
+  .header-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+  
+  .notification-btn {
+    align-self: flex-end;
+  }
+  
+  .notifications-list {
+    max-height: 300px;
+  }
+  
+  .notification-item {
+    padding: 10px 15px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -578,8 +740,6 @@ body {
   }
 }
 
-
-
 /* Estilos específicos para el filtro de hora */
 .clock-icon {
   color: var(--text-light);
@@ -604,96 +764,4 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 ::placeholder {
   color: var(--text-light);
   opacity: 0.7;
-}
-
-/* Estilos para notificaciones */
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.notifications-container {
-  position: relative;
-}
-
-.notification-btn {
-  background-color: var(--warning-color);
-  color: white;
-  border: none;
-  padding: 0.75rem;
-  border-radius: 50%;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: var(--transition);
-  position: relative;
-}
-
-.notification-btn:hover {
-  background-color: #d97706;
-  transform: scale(1.05);
-}
-
-.notification-badge {
-  position: absolute;
-  top: -8px;
-  right: -8px;
-  background-color: var(--danger-color);
-  color: white;
-  border-radius: 50%;
-  width: 20px;
-  height: 20px;
-  font-size: 0.75rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: bold;
-}
-
-/* Estilos para estados de visitas */
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.8rem;
-  font-weight: 500;
-}
-
-.status-badge.ingresado {
-  background-color: rgba(16, 185, 129, 0.1);
-  color: var(--success-color);
-  border: 1px solid rgba(16, 185, 129, 0.2);
-}
-
-.status-badge.pendiente {
-  background-color: rgba(107, 114, 128, 0.1);
-  color: var(--text-light);
-  border: 1px solid rgba(107, 114, 128, 0.2);
-}
-
-/* Estilos para filas escaneadas */
-.visitas-table-row.escaneada {
-  background-color: rgba(16, 185, 129, 0.05);
-}
-
-.visita-card.escaneada {
-  border-left: 4px solid var(--success-color);
-  background-color: rgba(16, 185, 129, 0.02);
-}
-
-/* Responsive para notificaciones */
-@media (max-width: 768px) {
-  .header-actions {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.75rem;
-  }
-  
-  .notification-btn {
-    align-self: flex-end;
-  }
 }
