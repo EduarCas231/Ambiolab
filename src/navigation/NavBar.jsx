@@ -11,7 +11,6 @@ const NavBar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [userTipo, setUserTipo] = useState(localStorage.getItem("tipo"));
   const [notificacionesCount, setNotificacionesCount] = useState(0);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
   // Determina si estamos en la página de inicio
   const isHomePage = location.pathname === '/home';
@@ -36,10 +35,9 @@ const NavBar = () => {
         }
 
         const data = await response.json();
-
+        
         // Convertir a string para asegurar la comparación correcta
         setUserTipo(String(data.tipo));
-        localStorage.setItem('tipo', String(data.tipo));
       } catch (error) {
         localStorage.clear();
         navigate('/login', { replace: true });
@@ -64,33 +62,22 @@ const NavBar = () => {
     };
 
     checkNotifications();
-
+    
     // Verificar cada 10 segundos
     const interval = setInterval(checkNotifications, 10000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) {
-        setIsMenuOpen(false);
-      }
-    };
-
     const handleScroll = () => {
       // Solo aplica scroll effect en home
       if (isHomePage) {
         setScrolled(window.scrollY > 10);
       }
     };
-
-    window.addEventListener('resize', handleResize);
+    
     window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.removeEventListener('scroll', handleScroll);
-    };
+    return () => window.removeEventListener('scroll', handleScroll);
   }, [isHomePage]);
 
   const handleLogout = async () => {
@@ -102,69 +89,47 @@ const NavBar = () => {
     }
   };
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
-  };
-
   return (
-    <nav className="navbar">
-      <div className="navbar-container">
-        {/* Botón menú móvil */}
-        {isMobile && (
-          <button className="menu-toggle" onClick={toggleMenu}>
-            {isMenuOpen ? <FaTimes /> : <FaBars />}
-            <span>Menú</span>
-          </button>
-        )}
-
-        {/* Enlaces de navegación */}
-        <ul className={`nav-list ${isMobile ? (isMenuOpen ? 'active' : '') : ''}`}>
-          <li className="nav-item">
-            <NavLink
-              to="/home"
-              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-              onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+    <nav className={`navbar ${isHomePage ? (scrolled ? 'scrolled' : 'transparent') : 'solid'}`}>
+      <div className="navbar-content">
+        {/* Contenedor izquierdo con logo y enlaces */}
+        <div className="navbar-left">
+          <div>
+            <Link to="/home" className="logo">
+              <span className="logo-text">AMBIOLAB</span>
+            </Link>
+          </div>
+          <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
+            <NavLink 
+              to="/home" 
+              className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
               end
             >
               <FaHome className="nav-icon" />
-              <span>Inicio</span>
+              Inicio
             </NavLink>
-          </li>
-        
-          {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2 || userTipo === '3' || userTipo === 3) && (
-            <li className="nav-item">
-              <NavLink
-                to="/pedidos"
-                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+            {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2 || userTipo === '3' || userTipo === 3) && (
+              <NavLink 
+                to="/pedidos" 
+                className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
               >
                 <FaTrafficLight className="nav-icon" />
-                <span>Semaforo</span>
+                Pedidos
               </NavLink>
-            </li>
-          )}
-
-         
-          {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2) && (
-            <li className="nav-item">
-              <NavLink
-                to="/news"
-                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+            )}
+            {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2) && (
+              <NavLink 
+                to="/news" 
+                className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
               >
                 <FaCalendarAlt className="nav-icon" />
-                <span>Eventos</span>
+                Eventos
               </NavLink>
-            </li>
-          )}
-
-          
-          {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2 || userTipo === '3' || userTipo === 3 || userTipo === '4' || userTipo === 4) && (
-            <li className="nav-item">
-              <NavLink
-                to="/visitas"
-                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+            )}
+            {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2 || userTipo === '3' || userTipo === 3 || userTipo === '4' || userTipo === 4) && (
+              <NavLink 
+                to="/visitas" 
+                className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
               >
                 <FaUserFriends className="nav-icon" />
                 <span className="nav-item-content">
@@ -174,52 +139,45 @@ const NavBar = () => {
                   )}
                 </span>
               </NavLink>
-            </li>
-          )}
-
-         
-          {(userTipo === '1' || userTipo === 1 || userTipo === '5' || userTipo === 5) && (
-            <li className="nav-item">
+            )}
+            {(userTipo === '1' || userTipo === 1 || userTipo === '5' || userTipo === 5) && (
               <NavLink
                 to="/escaner"
-                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+                className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
               >
                 <FaQrcode className="nav-icon" />
-                <span>Escaner</span>
+                Escaner
               </NavLink>
-            </li>
-          )}
-
-
-          {(userTipo === '1' || userTipo === 1) && (
-            <li className='nav-item'>
+            )}
+            {(userTipo === '1' || userTipo === 1) && (
               <NavLink
                 to="/users"
-                className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-                onClick={() => { if (isMobile) setIsMenuOpen(false); }}
+                className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
               >
                 <FaUsers className="nav-icon" />
-                <span>Usuarios</span>
+                Usuarios
               </NavLink>
-            </li>
-          )}
+            )}
+            <button onClick={handleLogout} className="logout-btn mobile-logout">
+              Cerrar Sesión
+            </button>
+          </div>
+        </div>
 
-          {isMobile && (
-            <li className="nav-item">
-              <button onClick={handleLogout} className="logout-btn mobile-logout">
-                Cerrar Sesión
-              </button>
-            </li>
-          )}
-        </ul>
-
-        {/* Botón logout desktop */}
-        {!isMobile && (
+        {/* Contenedor derecho con botón de logout */}
+        <div className="navbar-right">
           <button onClick={handleLogout} className="logout-btn desktop-logout">
             <span className="logout-text">Cerrar Sesión</span>
           </button>
-        )}
+          
+          <button 
+            className="menu-toggle"
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            aria-label="Toggle menu"
+          >
+            <span className={`hamburger ${isMenuOpen ? 'open' : ''}`}></span>
+          </button>
+        </div>
       </div>
     </nav>
   );

@@ -1,123 +1,189 @@
-import React, { useState, useEffect } from 'react';
-import { GiEarthAmerica, GiMedal } from 'react-icons/gi';
-import { MdHistory, MdGroups } from 'react-icons/md';
-import { IoMdBusiness } from 'react-icons/io';
+import React, { useEffect } from 'react';
+import { Box, Typography, Divider, Grid } from '@mui/material';
 import NavBar from '../navigation/NavBar';
-import LabsaLogo from '../components/LabsaLogo';
+import { initScrollAnimations } from '../components/scrollAnimations';
+import ParticlesBackground from '../components/ParticlesBackground';
 import '../styles/Home.css';
 
-const Home = () => {
-  return (
-    <div className="app-container">
-      <NavBar />
-      
-      <div className="content-wrapper">
-        <div className="logo-container">
-          <LabsaLogo />
-        </div>
+// Data constants
+const FEATURES = [
+  { title: "Experiencia y Confiabilidad", text: "Con una trayectoria comprobada y un equipo altamente capacitado.", icon: "✓" },
+  { title: "Tecnología Avanzada", text: "Utilizamos los equipos y técnicas más avanzadas para asegurar la precisión.", icon: "⚙️" },
+  { title: "Atención Personalizada", text: "Servicio al cliente excepcional, adaptándonos a necesidades específicas.", icon: "👥" },
+  { title: "Cumplimiento Normativo", text: "Cumplimos con regulaciones ambientales locales, nacionales e internacionales.", icon: "📋" }
+];
 
-        <div className="title-container fade-in">
-          <h1 className="main-title">LABORATORIOS Y SUMINISTROS AMBIENTALES E INDUSTRIALES</h1>
-          <p className="description">
-            <strong>Laboratorio ACREDITADO por la EMA y APROBADO por CONAGUA, STPS y PROFEPA.</strong>
-          </p>
-        </div>
+const SERVICES = [
+  {
+    title: "Muestreo y Análisis de Agua",
+    items: [
+      "<strong>Toma de muestras en sitio</strong> - NOM-230-SSA1-2002",
+      "<strong>Agua para uso y consumo humano</strong> - NOM-127-SSA1-2021",
+      "<strong>Aguas Residuales</strong>",
+      "NOM-001-SEMARNAT-2021",
+      "NOM-002-SEMARNAT-1996",
+      "NOM-003-SEMARNAT-1997"
+    ]
+  },
+  {
+    title: "Recipientes Sujetos a Presión",
+    items: [
+      "NOM 020 STPS 2011",
+      "Ensayos no destructivos",
+      "Elaboración de expediente",
+      "Dictamen de verificación",
+      "Autorización STPS"
+    ]
+  },
+  {
+    title: "Análisis de Ambiente Laboral",
+    items: [
+      "<strong>Ruido Laboral</strong> - NOM 011 STPS 2001",
+      "<strong>Condiciones Térmicas Extremas</strong> - NOM 015 STPS 2001",
+      "<strong>Electricidad Estática</strong> - NOM 022 STPS 2015",
+      "<strong>Condiciones de Iluminación</strong> - NOM 025 STPS 2008"
+    ]
+  }
+];
+
+const HeroContent = () => (
+  <div className="hero-overlay">
+    <Typography variant="h2" component="h1" className="hero-title">
+      Soluciones Ambientales Integrales
+    </Typography>
+    <Typography variant="h5" className="hero-subtitle">
+      Precisión • Confiabilidad • Innovación
+    </Typography>
+    <div className="scroll-indicator">
+      <div className="mouse">
+        <div className="wheel"></div>
       </div>
+      <div className="arrow-downst">
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+    <path d="M12 5v14M12 19l7-7M12 19l-7-7" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+  </svg>
+</div>
 
-      <section className="timeline-section fade-in">
-        <div className="section-header">
-          <MdHistory className="section-icon" />
-          <h3 className="section-title">Historia</h3>
-        </div>
+    </div>
+  </div>  
+);
 
-          <div className="timeline-container">
-            {[
-              { 
-                year: '2011', 
-                title: 'Fundación', 
-                description: 'Laboratorios y Suministros Ambientales e Industriales brinda servicios de análisis microbiológicos y fisicoquímicos en aguas residuales y suelos contaminados, así como en ambiente laboral.' 
-              },
-              { 
-                year: '2012', 
-                title: 'Acreditación y Aprobación', 
-                description: 'Logramos la acreditación POR EMA y la aprobación por parte de la CONAGUA, PROFEPA y STPS.' 
-              },
-              { 
-                year: '2015', 
-                title: 'Ampliación de Signatarios', 
-                description: 'Durante la renovación de la acreditación ante la EMA, ampliamos la plantilla de signatarios y personal.' 
-              },
-              { 
-                year: '2018', 
-                title: 'Pruebas de Aptitud Satisfactorias', 
-                description: 'Participamos en ensayos de aptitud a nivel nacional e internacional obteniendo resultados satisfactorios.' 
-              },
-              { 
-                year: '2022', 
-                title: 'Compromiso', 
-                description: 'Seguimos creciendo y capacitando a nuestro personal y clientes para garantizar el cumplimiento de la normatividad nacional e internacional.' 
-              }
-            ].map((event, index) => (
-              <div key={index} className="timeline-event">
-                <div className="timeline-date">{event.year}</div>
-                <div className="timeline-content">
-                  <h4 className="timeline-title">{event.title}</h4>
-                  <p className="timeline-text">{event.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+const FeatureCard = ({ feature, index }) => (
+  <Grid item xs={12} md={6} lg={3} key={index} data-aos="fade-up" data-aos-delay={index * 100}>
+    <div className="feature-card">
+      <div className="feature-icon">{feature.icon}</div>
+      <Typography variant="h6" className="feature-card-title">{feature.title}</Typography>
+      <Typography variant="body2" className="feature-card-text">{feature.text}</Typography>
+    </div>
+  </Grid>
+);
+
+const ServiceCard = ({ service, index }) => (
+  <Grid item xs={12} md={6} key={index} data-aos="fade-up" data-aos-delay={index % 2 * 100}>
+    <div className="service-card">
+      <div className="service-card-content">
+        <Typography variant="h5" component="h3" className="service-title">{service.title}</Typography>
+        <ul className="service-list">
+          {service.items.map((item, i) => (
+            <li key={i} dangerouslySetInnerHTML={{ __html: item }} />
+          ))}
+        </ul>
+      </div>
+    </div>
+  </Grid>
+);
+
+const Home = () => {
+  useEffect(() => {
+    initScrollAnimations();
+  }, []);
+
+  return (
+    <div className="home-container">
+      <ParticlesBackground />
+      <NavBar />
+
+      <section className="hero-section" style={{ height: '100vh', position: 'relative' }}>
+        <HeroContent />
       </section>
 
-      <section className="about-section fade-in">
-        <div className="about-overlay"></div>
-        <div className="about-content">
-          <div className="about-header">
-            <MdGroups className="about-icon" />
-            <h1 className="about-title">
-              <strong>¿Quiénes Somos?</strong>
-            </h1>
-          </div>
-          <p className="about-text">
-            LABSA es un laboratorio de análisis ambientales e industriales, especializado en la rama de agua residual y suelo contaminado. Contamos con más de 10 años de experiencia en la industria, con equipos y tecnología de punta, garantizando la satisfacción de nuestros clientes y la confiabilidad de nuestros análisis y resultados.
-          </p>
+      <section className="about-section section scroll-animate">
+        <Typography variant="h4" component="h2" gutterBottom className="section-title" data-aos="fade-up">Sobre Nosotros</Typography>
+        <Typography paragraph className="section-text" data-aos="fade-up">
+          En Ambiolab, nos dedicamos a ofrecer soluciones precisas y confiables en el campo del análisis ambiental. Nuestro equipo de expertos trabaja incansablemente para asegurar que nuestros clientes obtengan datos exactos y útiles.
+        </Typography>
+        <Typography paragraph className="section-text" data-aos="fade-up">
+          Utilizamos tecnología de punta y métodos analíticos avanzados para garantizar la máxima precisión en nuestros resultados.
+        </Typography>
+      </section>
+
+      <section className="why-us-section section scroll-animate">
+        <Typography variant="h4" component="h2" gutterBottom className="section-title" data-aos="fade-up">¿Por qué elegirnos?</Typography>
+        <Grid container spacing={4}>
+          {FEATURES.map((feature, index) => (
+            <FeatureCard key={index} feature={feature} index={index} />
+          ))}
+        </Grid>
+      </section>
+
+      <section className="services-section section scroll-animate">
+        <Typography variant="h4" component="h2" gutterBottom className="section-title" data-aos="fade-up">Nuestros Servicios</Typography>
+        <Grid container spacing={4}>
+          {SERVICES.map((service, index) => (
+          
+            <ServiceCard key={index} service={service} index={index} />
+          ))}
+        </Grid>
+      </section>
+
+      <section className="team-section section scroll-animate">
+        <Typography variant="h4" component="h2" gutterBottom className="section-title" data-aos="fade-up">Nuestro Equipo</Typography>
+        <Typography paragraph className="section-text" data-aos="fade-up">
+          Contamos con un equipo multidisciplinario de profesionales altamente capacitados y certificados.
+        </Typography>
+      </section>
+
+      <section className="privacy-section section scroll-animate">
+        <Typography variant="h4" component="h2" gutterBottom className="section-title" data-aos="fade-up">Aviso de Privacidad</Typography>
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={6} data-aos="fade-up">
+            <div className="privacy-card">
+              <Typography variant="h5" component="h3" className="privacy-subtitle">Datos personales que recabamos y protegemos:</Typography>
+              <ul className="privacy-list">
+                <li>Nombre, dirección, fecha y lugar de nacimiento</li>
+                <li>Estado civil, ocupación, comprobantes de domicilio</li>
+                <li>Correo electrónico y número telefónico</li>
+                <li>Datos patrimoniales y documentos oficiales</li>
+              </ul>
+            </div>
+          </Grid>
+
+          <Grid item xs={12} md={6} data-aos="fade-up" data-aos-delay="100">
+            <div className="privacy-card">
+              <Typography variant="h5" component="h3" className="privacy-subtitle">Finalidades del uso de sus datos:</Typography>
+              <ul className="privacy-list">
+                <li>Confirmar su identidad</li>
+                <li>Entender y atender necesidades legales</li>
+                <li>Cumplir requerimientos legales</li>
+                <li>Verificar la información proporcionada</li>
+              </ul>
+            </div>
+          </Grid>
+        </Grid>
+
+        <div className="contact-card scroll-animate" data-aos="fade-up" style={{ marginTop: '4rem' }}>
+          <Typography variant="h5" component="h3" className="privacy-subtitle">Derechos ARCO:</Typography>
+          <Typography paragraph className="section-text">
+            Usted puede acceder, rectificar, cancelar u oponerse al tratamiento de sus datos enviando su solicitud a <a href="mailto:contacto@ambiolab.mx" className="contact-link">contacto@ambiolab.mx</a> o llamando al <a href="tel:7229382338" className="contact-link">722 938 2338</a>.
+          </Typography>
         </div>
       </section>
-            
-      <section className="values-section fade-in">
-        <h3 className="values-title">Nuestros Principios</h3>
-        <div className="values-grid">
-          <div className="value-card">
-            <div className="card-icon">
-              <IoMdBusiness />
-            </div>
-            <h5 className="card-title"><strong>Misión</strong></h5>
-            <p className="card-text">
-              Realizar muestreo y análisis de la industria, aguas, aire, fuentes fijas, residuos, suelos, higiene y salud ocupacional, proporcionando resultados confiables.
-            </p>
-          </div>
 
-          <div className="value-card">
-            <div className="card-icon">
-              <GiEarthAmerica />
-            </div>
-            <h5 className="card-title"><strong>Visión</strong></h5>
-            <p className="card-text">
-              Ser una empresa reconocida a nivel nacional, apoyando la protección ambiental y la prevención de la contaminación en equilibrio con las condiciones socioeconómicas de las partes interesadas.
-            </p>
-          </div>
-
-          <div className="value-card">
-            <div className="card-icon">
-              <GiMedal />
-            </div>
-            <h5 className="card-title"><strong>Valores</strong></h5>
-            <p className="card-text">
-              Humildad, Igualdad, Pertenencia, Ética, Eficiencia, Trabajo en Equipo, Solidaridad, Compromiso, Honestidad, Lealtad.
-            </p>
-          </div>
-        </div>
-      </section>
+      <footer className="footer scroll-animate" data-aos="fade-up">
+        <Typography variant="body2" className="copyright">
+          © Ambiolab – Derechos Reservados {new Date().getFullYear()}
+        </Typography>
+      </footer>
     </div>
   );
 };

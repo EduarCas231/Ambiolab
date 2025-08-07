@@ -1,5 +1,5 @@
 // Configuración de URLs de API
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://189.136.81.161';
+const API_BASE_URL = process.env.REACT_APP_API_URL || 'https://189.136.81.161/api';
 
 const API = {
   auth: {
@@ -22,13 +22,13 @@ const API = {
     delete: (id) => `${API_BASE_URL}/news/${id}`,
   },
   visitas: {
-    getAll: `${API_BASE_URL}/visitam`,
-    getById: (id) => `${API_BASE_URL}/visitam/${id}`,
-    getByCode: (codigo) => `${API_BASE_URL}/visitam/codigo/${encodeURIComponent(codigo)}`,
-    markScanned: (id) => `${API_BASE_URL}/visitam/${id}/escaneado`,
-    create: `${API_BASE_URL}/visitam`,
-    update: (id) => `${API_BASE_URL}/visitam/${id}`,
-    delete: (id) => `${API_BASE_URL}/visitam/${id}`,
+    getAll: `${API_BASE_URL}/visitas`,
+    getById: (id) => `${API_BASE_URL}/visitas/${id}`,
+    getByCode: (codigo) => `${API_BASE_URL}/visitas/codigo/${encodeURIComponent(codigo)}`,
+    markScanned: (id) => `${API_BASE_URL}/visitas/${id}/escaneado`,
+    create: `${API_BASE_URL}/visitas`,
+    update: (id) => `${API_BASE_URL}/visitas/${id}`,
+    delete: (id) => `${API_BASE_URL}/visitas/${id}`,
   },
   notificaciones: {
     getAll: `${API_BASE_URL}/notificaciones`,

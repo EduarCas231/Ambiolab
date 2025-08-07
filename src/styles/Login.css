@@ -2,217 +2,190 @@
 
 /* Contenedor principal */
 .login-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f8f9fa;
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f9fa;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-card {
+  max-width: 400px;
+  width: 100%;
+  background: white;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Logo y título */
+.logo-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.logo {
+  height: 60px;
+  margin-bottom: 20px;
+}
+
+.login-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #2d3748;
+}
+
+/* Formulario */
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-group label {
+  font-size: 14px;
+  color: #4a5568;
+  font-weight: 500;
+}
+
+.input-group input {
+  padding: 12px 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.input-group input:focus {
+  border-color: #3182ce;
+  box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
+  outline: none;
+}
+
+/* Mensajes */
+.error-message {
+  background-color: #fff5f5;
+  padding: 12px;
+  border-radius: 6px;
+  color: #c53030;
+  font-size: 14px;
+}
+
+.success-message {
+  background-color: #f0fff4;
+  padding: 12px;
+  border-radius: 6px;
+  color: #2f855a;
+  font-size: 14px;
+}
+
+/* Recordar/olvidar contraseña */
+.remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.forgot-password {
+  color: #3182ce;
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+}
+
+/* Botón de login */
+.login-button {
+  padding: 12px;
+  background-color: #3182ce;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.login-button:hover {
+  background-color: #2c5282;
+}
+
+.login-button.loading {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+.spinner.hidden {
+  display: none;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
-  
+}
+
+/* Enlace de registro */
+.signup-link {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #4a5568;
+}
+
+.signup-link a {
+  color: #3182ce;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.signup-link a:hover {
+  text-decoration: underline;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
   .login-card {
-    max-width: 400px;
-    width: 100%;
-    background: white;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 30px 20px;
   }
-  
-  /* Logo y título */
-  .logo-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 30px;
-    width: 100%;
-  }
-  
-  .logo-section .labsa-logo-container {
-    max-width: 160px;
-    margin: 0 auto 15px auto;
-  }
-  
-  .logo-section .labsa-text {
-    font-size: clamp(18px, 4vw, 24px) !important;
-    letter-spacing: 0.05em !important;
-    margin-top: 0.3em !important;
-  }
-  
+
   .login-title {
-    font-size: 24px;
-    font-weight: 600;
-    color: #2d3748;
+    font-size: 20px;
   }
-  
-  /* Formulario */
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .input-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  
-  .input-group label {
-    font-size: 14px;
-    color: #4a5568;
-    font-weight: 500;
-  }
-  
-  .input-group input {
-    padding: 12px 16px;
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    font-size: 14px;
-  }
-  
-  .input-group input:focus {
-    border-color: #3182ce;
-    box-shadow: 0 0 0 2px rgba(49, 130, 206, 0.2);
-    outline: none;
-  }
-  
-  /* Mensajes */
-  .error-message {
-    background-color: #fff5f5;
-    padding: 12px;
-    border-radius: 6px;
-    color: #c53030;
-    font-size: 14px;
-  }
-  
-  .success-message {
-    background-color: #f0fff4;
-    padding: 12px;
-    border-radius: 6px;
-    color: #2f855a;
-    font-size: 14px;
-  }
-  
-  /* Recordar/olvidar contraseña */
+
   .remember-forgot {
-    display: flex;
-    justify-content: space-between;
-    font-size: 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
   }
-  
-  .remember-me {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .forgot-password {
-    color: #3182ce;
-    text-decoration: none;
-  }
-  
-  .forgot-password:hover {
-    text-decoration: underline;
-  }
-  
-  /* Botón de login */
-  .login-button {
-    padding: 12px;
-    background-color: #3182ce;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-weight: 500;
-    font-size: 16px;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-  }
-  
-  .login-button:hover {
-    background-color: #2c5282;
-  }
-  
-  .login-button.loading {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-  
-  /* Spinner */
-  .spinner {
-    width: 20px;
-    height: 20px;
-    border: 3px solid rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    border-top-color: white;
-    animation: spin 1s ease-in-out infinite;
-  }
-  
-  .spinner.hidden {
-    display: none;
-  }
-  
-  @keyframes spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-  
-  /* Enlace de registro */
-  .signup-link {
-    text-align: center;
-    margin-top: 20px;
-    font-size: 14px;
-    color: #4a5568;
-  }
-  
-  .signup-link a {
-    color: #3182ce;
-    text-decoration: none;
-    font-weight: 500;
-  }
-  
-  .signup-link a:hover {
-    text-decoration: underline;
-  }
-  
-  /* Responsive */
-  @media (max-width: 768px) {
-    .logo-section .labsa-logo-container {
-      max-width: 150px;
-    }
-    
-    .logo-section .labsa-text {
-      font-size: clamp(16px, 3.5vw, 20px) !important;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .login-card {
-      padding: 30px 20px;
-    }
-  
-    .login-title {
-      font-size: 20px;
-    }
-    
-    .logo-section .labsa-logo-container {
-      max-width: 140px;
-    }
-    
-    .logo-section .labsa-text {
-      font-size: clamp(14px, 3vw, 18px) !important;
-      letter-spacing: 0.03em !important;
-    }
-  
-    .remember-forgot {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-    }
-  }
-  
+}
