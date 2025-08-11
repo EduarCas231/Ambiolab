@@ -114,7 +114,7 @@ const NavBar = () => {
                 className={({ isActive }) => isActive ? 'nav-item active' : 'nav-item'}
               >
                 <FaTrafficLight className="nav-icon" />
-                Pedidos
+                Orden de trabajo
               </NavLink>
             )}
             {(userTipo === '1' || userTipo === 1 || userTipo === '2' || userTipo === 2) && (

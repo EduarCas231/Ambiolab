@@ -138,7 +138,7 @@ const Pedidos = () => {
       <div className="content-area">
       <div className="pedidos-container">
         <div className="pedidos-header">
-          <h2 className="pedidos-title">Lista de Pedidos</h2>
+          <h2 className="pedidos-title">Lista Orden de trabajo</h2>
           <button 
             className="pedidos-button pedidos-button-success"
             onClick={handleNuevoRegistro}
