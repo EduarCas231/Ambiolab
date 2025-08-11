@@ -391,7 +391,7 @@ function Escaner() {
                   </div>
                   
                   <div className="welcome-msg">
-                    🎉 ¡Bienvenido a LABSA!<br/>
+                    🎉 ¡Bienvenido Ambiolab!<br/>
                     Favor de pasar al área asignada
                   </div>
                 </div>
