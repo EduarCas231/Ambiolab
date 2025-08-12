@@ -6,8 +6,10 @@ import API from '../../config/api';
 
 const RegistroS = () => {
   const [formData, setFormData] = useState({
+    ot: '',
     nombre: '',
     norma: '',
+    parametros: '',
     estatus: 'pendiente',
     fecha_inicio: '',
     fecha_final: '',
@@ -65,7 +67,20 @@ const RegistroS = () => {
 
         <form onSubmit={handleSubmit} className="registro-form">
           <div className="form-group">
-            <label htmlFor="nombre">Nombre del Cliente <span className="required">*</span></label>
+            <label htmlFor="ot">OT <span className="required">*</span></label>
+            <input
+              type="text"
+              id="ot"
+              name="ot"
+              placeholder="Ingrese el número de OT"
+              required
+              value={formData.ot}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="nombre">Cliente <span className="required">*</span></label>
             <input
               type="text"
               id="nombre"
@@ -81,6 +96,18 @@ const RegistroS = () => {
             <label htmlFor="norma">Norma</label>
             <NormaAutocomplete 
               value={formData.norma}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="parametros">Parámetros</label>
+            <textarea
+              id="parametros"
+              name="parametros"
+              placeholder="Ingrese los parámetros del análisis..."
+              rows="3"
+              value={formData.parametros}
               onChange={handleChange}
             />
           </div>
@@ -140,11 +167,11 @@ const RegistroS = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="comentario">Comentarios</label>
+            <label htmlFor="comentario">Observaciones</label>
             <textarea
               id="comentario"
               name="comentario"
-              placeholder="Ingrese cualquier comentario relevante..."
+              placeholder="Ingrese cualquier observación relevante..."
               rows="4"
               value={formData.comentario}
               onChange={handleChange}

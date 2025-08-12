@@ -9,8 +9,10 @@ const EditS = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
+    ot: '',
     nombre: '',
     norma: '',
+    parametros: '',
     estatus: 'pendiente',
     fecha_inicio: '',
     fecha_final: '',
@@ -42,8 +44,10 @@ const EditS = () => {
         const data = await response.json();
 
         setFormData({
+          ot: data.ot ?? '',
           nombre: data.nombre ?? '',
           norma: data.norma ?? '',
+          parametros: data.parametros ?? '',
           estatus: data.estatus ?? 'pendiente',
           fecha_inicio: formatDateInput(data.fecha_inicio),
           fecha_final: formatDateInput(data.fecha_final),
@@ -118,7 +122,20 @@ const EditS = () => {
 
         <form onSubmit={handleSubmit} className="edit-form">
           <div className="form-group">
-            <label htmlFor="nombre">Nombre del Cliente</label>
+            <label htmlFor="ot">OT</label>
+            <input
+              type="text"
+              id="ot"
+              name="ot"
+              placeholder="Ingrese el número de OT"
+              required
+              value={formData.ot}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="nombre">Cliente</label>
             <input
               type="text"
               id="nombre"
@@ -134,6 +151,18 @@ const EditS = () => {
             <label htmlFor="norma">Norma</label>
             <NormaAutocomplete
               value={formData.norma}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="parametros">Parámetros</label>
+            <textarea
+              id="parametros"
+              name="parametros"
+              placeholder="Ingrese los parámetros del análisis..."
+              rows="3"
+              value={formData.parametros}
               onChange={handleChange}
             />
           </div>
@@ -193,11 +222,11 @@ const EditS = () => {
           </div>
 
           <div className="form-group">
-            <label htmlFor="comentario">Comentarios</label>
+            <label htmlFor="comentario">Observaciones</label>
             <textarea
               id="comentario"
               name="comentario"
-              placeholder="Ingrese cualquier comentario relevante..."
+              placeholder="Ingrese cualquier observación relevante..."
               rows="4"
               value={formData.comentario}
               onChange={handleChange}
