@@ -149,7 +149,7 @@ const Pedidos = () => {
             <button
               className="pedidos-button pedidos-button-success"
               onClick={handleNuevoRegistro}
-            >
+            > 
               <span>+</span> Nuevo Registro
             </button>
           </div>
