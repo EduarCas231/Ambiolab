@@ -241,7 +241,7 @@ const Pedidos = () => {
                 </table>
               </div>
 
-              {/* Cards para móviles */}
+
               <div className="pedidos-cards">
                 {pedidos.map((pedido) => {
                   const diasRestantes = calcularDiasRestantes(pedido.fecha_inicio, pedido.fecha_final);

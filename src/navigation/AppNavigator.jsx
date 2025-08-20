@@ -65,12 +65,12 @@ function EscanerRoute({ children }) {
 export default function AppNavigator() {
   return (
     <Routes>
-      {/* Rutas públicas */}
+      
       <Route path="/login" element={<Login />} />
       <Route path="/registro" element={<Registro />} />
       <Route path="/contra" element={<Contra />} />
 
-      {/* Rutas privadas normales */}
+      
       <Route
         path="/home"
         element={

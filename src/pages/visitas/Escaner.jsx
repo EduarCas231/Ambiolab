@@ -206,7 +206,7 @@ function Escaner() {
         if (result.isConfirmed) {
           setScanning(true);
         } else if (result.isDismissed) {
-          // Enfocar en el input manual
+
           setScanning(true);
           setTimeout(() => {
             const manualInput = document.querySelector('.manual-input');

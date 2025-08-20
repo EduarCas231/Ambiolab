@@ -5,7 +5,7 @@ import { initScrollAnimations } from '../components/scrollAnimations';
 import ParticlesBackground from '../components/ParticlesBackground';
 import '../styles/Home.css';
 
-// Data constants
+
 const FEATURES = [
   { title: "Experiencia y Confiabilidad", text: "Con una trayectoria comprobada y un equipo altamente capacitado.", icon: "✓" },
   { title: "Tecnología Avanzada", text: "Utilizamos los equipos y técnicas más avanzadas para asegurar la precisión.", icon: "⚙️" },

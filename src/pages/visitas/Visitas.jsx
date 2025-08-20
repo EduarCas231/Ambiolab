@@ -115,17 +115,6 @@ const Visitas = () => {
         const notificacionesRelacionadas = notificaciones.filter(n => n.visita_id == id);
         console.log('Notificaciones a eliminar:', notificacionesRelacionadas.length);
         
-        for (const notif of notificacionesRelacionadas) {
-          try {
-            await fetch(`https://189.136.60.147/notificaciones/${notif.id}`, {
-              method: 'DELETE',
-            });
-            console.log(`Notificación ${notif.id} eliminada`);
-          } catch (error) {
-            console.warn(`Error eliminando notificación ${notif.id}:`, error);
-          }
-        }
-        
        
         const response = await fetch(API.visitas.delete(id), {
           method: 'DELETE',
@@ -179,7 +168,7 @@ const Visitas = () => {
     }
   };
 
-  // Calcular contadores
+ 
   const visitasActivas = visitas.filter(v => !v.escaneado).length;
   const visitasHistorial = visitas.filter(v => v.escaneado).length;
 
@@ -192,7 +181,7 @@ const Visitas = () => {
     const filtroDepartamentoOk = visita.departamento?.toLowerCase().includes(filtroDepartamento.trim().toLowerCase()) ?? true;
     const filtroFechaOk = filtroFecha ? visita.dia === filtroFecha : true;
     
-    // Filtrar por pestaña activa
+  
     const tabFilter = activeTab === 'activos' ? !visita.escaneado : visita.escaneado;
 
     return filtroNombreOk && filtroHoraOk && filtroDepartamentoOk && filtroFechaOk && tabFilter;
@@ -278,7 +267,7 @@ const Visitas = () => {
                             const dateObj = new Date(fecha);
                             if (isNaN(dateObj.getTime())) return 'No disponible';
                             
-                            // Usar UTC para evitar conversión de zona horaria
+                         
                             const day = dateObj.getUTCDate().toString().padStart(2, '0');
                             const month = (dateObj.getUTCMonth() + 1).toString().padStart(2, '0');
                             const year = dateObj.getUTCFullYear();

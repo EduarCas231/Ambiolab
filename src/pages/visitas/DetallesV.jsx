@@ -32,16 +32,18 @@ const DetallesV = () => {
   if (loading) return <p>Cargando detalles...</p>;
   if (!visita) return <p>No se encontró la visita.</p>;
 
-  // Convertir fecha a objeto Date
+  
   const fechaObj = new Date(visita.fecha);
-  // Obtener día y hora en formato legible
-  const dia = fechaObj.toLocaleDateString();   // Ejemplo: 15/5/2025 (según local)
-  const hora = fechaObj.toLocaleTimeString();  // Ejemplo: 14:30:00
+  
+  const dia = fechaObj.toLocaleDateString();   
+  const hora = fechaObj.toLocaleTimeString();  
 
-  // Solo usar el código de la visita para el QR
+  
   const qrData = `${visita.codigo}`;
 
   return (
+    <div>
+    <NavBar /> 
     <div className="detalles-container">
       <h2>Detalle de la visita  <span> {id}</span></h2>
       <p><strong>Nombre:</strong> <span>{visita.nombre}</span></p>
@@ -52,12 +54,14 @@ const DetallesV = () => {
       <p><strong>Hora:</strong> <span>{hora}</span></p>
       <p><strong>Día:</strong> <span>{dia}</span></p>
       <p><strong>Detalle:</strong> <span>{visita.detalle || 'N/A'}</span></p>
+      <span classname="button-exit" ></span>
 
       <div className="qr-section">
         <h3>Código QR</h3>
         <QRCodeCanvas value={qrData} size={200} />
       </div>
     </div>
+    </ div>
   );
 };
 

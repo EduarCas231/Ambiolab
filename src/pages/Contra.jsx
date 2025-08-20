@@ -6,8 +6,7 @@ import {
   Divider, 
   Box 
 } from '@mui/material';
-import NavBar from '../navigation/NavBar';
-import '../styles/Contra.css'; // Assuming you have a CSS file for styles
+import '../styles/Contra.css'; 
 
 const Contra = () => {
   const handleContactSupport = () => {
