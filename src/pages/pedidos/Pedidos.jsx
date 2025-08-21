@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import NavBar from '../../navigation/NavBar';
 import { useNavigate } from 'react-router-dom';
 import LoadingSpinner from '../../components/LoadingSpinner';
+import Pagination from '../../components/Pagination';
 import '../../styles/Pedidos.css';
 import NormaIcon from '../../components/NormaIcon';
 import API from '../../config/api';
@@ -12,6 +13,9 @@ const Pedidos = () => {
   const [error, setError] = useState('');
   const [initialLoad, setInitialLoad] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [activeTab, setActiveTab] = useState('principal');
+  const itemsPerPage = 5;
   const navigate = useNavigate();
 
   const fetchPedidos = useCallback(async () => {
@@ -139,6 +143,43 @@ const Pedidos = () => {
 
   const columnas = ['ot', 'nombre', 'norma', 'parametros', 'estatus', 'fecha_inicio', 'fecha_final', 'comentario'];
 
+  // Filtrado por pestañas
+  const getFilteredPedidos = () => {
+    switch (activeTab) {
+      case 'principal':
+        return pedidos.filter(p => p.estatus?.toLowerCase() !== 'completado');
+      case 'historial':
+        return pedidos.filter(p => p.estatus?.toLowerCase() === 'completado');
+      case 'todos':
+      default:
+        return pedidos;
+    }
+  };
+
+  const filteredPedidos = getFilteredPedidos();
+
+  // Paginación
+  const totalPages = Math.ceil(filteredPedidos.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentPedidos = filteredPedidos.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+    setCurrentPage(1);
+  };
+
+  // Reset página cuando cambian los pedidos o filtros
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) {
+      setCurrentPage(1);
+    }
+  }, [filteredPedidos.length, currentPage, totalPages]);
+
   return (
     <div className="app-layout">
       <NavBar />
@@ -154,6 +195,27 @@ const Pedidos = () => {
             </button>
           </div>
 
+          <div className="tabs-container">
+            <button
+              className={`tab-button ${activeTab === 'principal' ? 'active' : ''}`}
+              onClick={() => handleTabChange('principal')}
+            >
+              Principal ({pedidos.filter(p => p.estatus?.toLowerCase() !== 'completado').length})
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'historial' ? 'active' : ''}`}
+              onClick={() => handleTabChange('historial')}
+            >
+              Historial ({pedidos.filter(p => p.estatus?.toLowerCase() === 'completado').length})
+            </button>
+            <button
+              className={`tab-button ${activeTab === 'todos' ? 'active' : ''}`}
+              onClick={() => handleTabChange('todos')}
+            >
+              Todos ({pedidos.length})
+            </button>
+          </div>
+
           {error && <p className="pedidos-error-message">{error}</p>}
 
           {isLoading && !initialLoad && (
@@ -166,8 +228,12 @@ const Pedidos = () => {
             <div className="loading-container">
               <LoadingSpinner message="Cargando pedidos..." />
             </div>
-          ) : pedidos.length === 0 ? (
-            <p className="pedidos-empty-message">No hay pedidos disponibles.</p>
+          ) : filteredPedidos.length === 0 ? (
+            <p className="pedidos-empty-message">
+              {activeTab === 'principal' ? 'No hay pedidos pendientes.' :
+               activeTab === 'historial' ? 'No hay pedidos completados.' :
+               'No hay pedidos disponibles.'}
+            </p>
           ) : (
             <>
 
@@ -187,7 +253,7 @@ const Pedidos = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {pedidos.map((pedido) => {
+                    {currentPedidos.map((pedido) => {
                       const diasRestantes = calcularDiasRestantes(pedido.fecha_inicio, pedido.fecha_final);
                       const colorDias = getColorDiasRestantes(diasRestantes);
                       const colorEstatus = getColorEstatus(pedido.estatus);
@@ -241,9 +307,8 @@ const Pedidos = () => {
                 </table>
               </div>
 
-
               <div className="pedidos-cards">
-                {pedidos.map((pedido) => {
+                {currentPedidos.map((pedido) => {
                   const diasRestantes = calcularDiasRestantes(pedido.fecha_inicio, pedido.fecha_final);
                   const colorDias = getColorDiasRestantes(diasRestantes);
                   const colorEstatus = getColorEstatus(pedido.estatus);
@@ -327,6 +392,12 @@ const Pedidos = () => {
                   );
                 })}
               </div>
+
+              <Pagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                onPageChange={handlePageChange}
+              />
             </>
           )}
         </div>
