@@ -4,8 +4,9 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
   const [inputValue, setInputValue] = useState(value || '');
   const [showModal, setShowModal] = useState(false);
   const [selectedMatrix, setSelectedMatrix] = useState(null);
+  const [selectedNorma, setSelectedNorma] = useState(null);
   const [selectedSpecification, setSelectedSpecification] = useState(null);
-  const [selectedMethod, setSelectedMethod] = useState(null);
+  const [selectedMethods, setSelectedMethods] = useState([]);
   const [selectedParameters, setSelectedParameters] = useState([]);
   const [allSelections, setAllSelections] = useState([]);
   const [step, setStep] = useState(1);
@@ -18,18 +19,18 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
         },
         "Tabla 1 - Especificaciones sanitarias físicas": {
           "STANDARD METHODS 2130 24TH ED. 2023": ["Turbiedad"],
-          "STANDARD METHODS 4500-H⁺ 24TH ED. 2023": ["Ph"],
+          "STANDARD METHODS 4500-H+ 24TH ED. 2023": ["Ph"],
           "STANDARD METHODS 2120 24TH ED. 2023": ["Color verdadero"]
         },
         "Tabla 2 - Especificaciones sanitarias químicas": {
-          "NMX-AA-058-SCFI-2001 / STANDARD METHODS 4500 CN¯E 24TH ED. 2023": ["Cianuros totales"],
+          "NMX-AA-058-SCFI-2001 / STANDARD METHODS 4500 CN-E 24TH ED. 2023": ["Cianuros totales"],
           "STANDARD METHODS 2340 24TH ED. 2023": ["Dureza total como CaCO3"],
           "STANDARD METHODS 4500 F 24TH ED. 2023": ["Fluoruros"],
           "STANDARD METHODS 4500-NH3 24TH ED. 2023": ["Nitrógeno amoniacal"],
-          "NMX-AA-079-SCFI-2001 / STANDARD METHODS 4500-NO3¯ 24TH ED. 2023": ["Nitrógeno de nitratos"],
-          "STANDARD METHODS 4500-NO2¯ 24TH ED. 2023": ["Nitrógeno de nitritos"],
+          "NMX-AA-079-SCFI-2001 / STANDARD METHODS 4500-NO3- 24TH ED. 2023": ["Nitrógeno de nitratos"],
+          "STANDARD METHODS 4500-NO2- 24TH ED. 2023": ["Nitrógeno de nitritos"],
           "STANDARD METHODS 2540 24TH ED. 2023": ["Sólidos disueltos totales"],
-          "STANDARD METHODS 4500-SO4¯² 24TH ED. 2023": ["Sulfatos"],
+          "STANDARD METHODS 4500-SO4-2 24TH ED. 2023": ["Sulfatos"],
           "NMX-AA-039-SCFI-2001 / STANDARD METHODS 5540 24TH ED. 2023": ["Sustancias Activas al azul de metileno"]
         },
         "Tabla 4 - Especificaciones sanitarias de metales y metaloides": {
@@ -123,6 +124,28 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
           "NMX-AA-131/1-SCFI-2021": ["ARSÉNICO", "CADMIO", "COBRE", "NIQUEL", "PLOMO", "ZINC", "MERCURIO"],
           "NMX-AA-044-SCFI-2014": ["CROMO HEXAVALENTE"]
         }
+      },
+      "NOM-003-SEMARNAT-1997": {
+        "MUESTREO": {
+          "NMX-AA-003-1980": ["AGUAS RESIDUALES - MUESTREO"],
+          "NMX-AA-014-1980": ["CUERPOS RECEPTORES - MUESTREO"]
+        },
+        "CONTAMINANTES BÁSICOS": {
+          "NMX-AA-007-SCFI-2013": ["TEMPERATURA"],
+          "NMX-AA-008-SCFI-2016": ["PH"],
+          "NMX-AA-006-SCFI-2010": ["MATERIA FLOTANTE"],
+          "NMX-AA-093-SCFI-2018": ["CONDUCTIVIDAD"],
+          "NMX-AA-034-SCFI-2015": ["SÓLIDOS SUSPENDIDOS TOTALES"],
+          "NMX-AA-005-SCFI-2013": ["GRASAS Y ACEITES"],
+          "NMX-AA-028-SCFI-2021": ["DEMANDA BIOQUIMICA DE OXÍGENO"],
+          "NMX-AA-030/2-SCFI-2011": ["DEMANDA QUIMICA DE OXÍGENO"],
+          "NMX-AA-113-SCFI-2012": ["HUEVOS DE HELMINTO"],
+          "NMX-AA-042-SCFI-2015": ["COLIFORMES FECALES Y TOTALES"]
+        },
+        "METALES Y METALOIDES": {
+          "NMX-AA-058-SCFI-2001": ["CIANURO"],
+          "NMX-AA-131/1-SCFI-2021": ["ARSÉNICO", "CADMIO", "COBRE", "CROMO", "NIQUEL", "PLOMO", "ZINC", "MERCURIO"]
+        }
       }
     },
     "AGUA CONGÉNITA": {
@@ -177,12 +200,12 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
       },
       "CFR 40 PARTE 50, APÉNDICE J": {
         "CALIDAD DEL AIRE": {
-          "CFR 40 PARTE 50, APÉNDICE J / TEOM® 1405 Ambient Particulate Monitor": ["Determinación de PM10"]
+          "CFR 40 PARTE 50, APÉNDICE J / TEOM 1405 Ambient Particulate Monitor": ["Determinación de PM10"]
         }
       },
       "CFR 40 PARTE 50, APÉNDICE L": {
         "CALIDAD DEL AIRE": {
-          "CFR 40 PARTE 50, APÉNDICE L / TEOM® 1405-F Ambient Particulate Monitor": ["Determinación de PM2.5"]
+          "CFR 40 PARTE 50, APÉNDICE L / TEOM 1405-F Ambient Particulate Monitor": ["Determinación de PM2.5"]
         }
       },
       "NA": {
@@ -204,8 +227,6 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
     }
   };
 
-  
-
   useEffect(() => {
     setInputValue(value || '');
   }, [value]);
@@ -220,10 +241,37 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
 
   const resetSelection = () => {
     setSelectedMatrix(null);
+    setSelectedNorma(null);
     setSelectedSpecification(null);
-    setSelectedMethod(null);
+    setSelectedMethods([]);
     setSelectedParameters([]);
     setStep(1);
+  };
+
+  const handleMethodToggle = (method) => {
+    setSelectedMethods(prev => 
+      prev.includes(method) 
+        ? prev.filter(m => m !== method)
+        : [...prev, method]
+    );
+  };
+
+  const getAvailableNormas = () => {
+    if (!selectedMatrix) return [];
+    return Object.keys(normasDB[selectedMatrix]);
+  };
+
+  const shouldShowNormaStep = () => {
+    return selectedMatrix && getAvailableNormas().length > 1;
+  };
+
+  const getCurrentNorma = () => {
+    if (selectedNorma) return selectedNorma;
+    if (selectedMatrix) {
+      const normas = getAvailableNormas();
+      return normas.length === 1 ? normas[0] : null;
+    }
+    return null;
   };
 
   const resetModal = () => {
@@ -240,11 +288,11 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
   };
 
   const addSelection = () => {
-    const normaGeneral = Object.keys(normasDB[selectedMatrix])[0];
+    const currentNorma = getCurrentNorma();
     const newSelection = {
       matrix: selectedMatrix,
-      norma: normaGeneral,
-      method: selectedMethod,
+      norma: currentNorma,
+      methods: selectedMethods,
       parameters: selectedParameters
     };
     setAllSelections(prev => [...prev, newSelection]);
@@ -252,11 +300,11 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
   };
 
   const addAndFinalize = () => {
-    const normaGeneral = Object.keys(normasDB[selectedMatrix])[0];
+    const currentNorma = getCurrentNorma();
     const newSelection = {
       matrix: selectedMatrix,
-      norma: normaGeneral,
-      method: selectedMethod,
+      norma: currentNorma,
+      methods: selectedMethods,
       parameters: selectedParameters
     };
     const updatedSelections = [...allSelections, newSelection];
@@ -265,29 +313,7 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
     const allParams = [];
     
     updatedSelections.forEach(selection => {
-      const parts = [selection.matrix, selection.norma, selection.method];
-      allParts.push(parts.filter(Boolean).join(' - '));
-      allParams.push(...selection.parameters);
-    });
-    
-    const finalValue = allParts.join(' | ');
-    setInputValue(finalValue);
-    if (onChange) {
-      onChange({ target: { name: 'norma', value: finalValue } });
-    }
-    if (onParametersChange) {
-      onParametersChange(allParams.join(', '));
-    }
-    setShowModal(false);
-    resetModal();
-  };
-
-  const generateFinalValue = () => {
-    const allParts = [];
-    const allParams = [];
-    
-    allSelections.forEach(selection => {
-      const parts = [selection.matrix, selection.norma, selection.method];
+      const parts = [selection.matrix, selection.norma, selection.methods.join(', ')];
       allParts.push(parts.filter(Boolean).join(' - '));
       allParams.push(...selection.parameters);
     });
@@ -306,14 +332,32 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
 
   const getAvailableMethods = () => {
     if (!selectedMatrix || !selectedSpecification) return [];
-    const normaGeneral = Object.keys(normasDB[selectedMatrix])[0];
-    return Object.keys(normasDB[selectedMatrix][normaGeneral][selectedSpecification]);
+    const currentNorma = getCurrentNorma();
+    if (!currentNorma) return [];
+    return Object.keys(normasDB[selectedMatrix][currentNorma][selectedSpecification]);
   };
 
-  const getAvailableParameters = () => {
-    if (!selectedMatrix || !selectedSpecification || !selectedMethod) return [];
-    const normaGeneral = Object.keys(normasDB[selectedMatrix])[0];
-    return normasDB[selectedMatrix][normaGeneral][selectedSpecification][selectedMethod] || [];
+  const getAllParametersFromNorma = () => {
+    if (!selectedMatrix) return [];
+    const currentNorma = getCurrentNorma();
+    if (!currentNorma) return [];
+    
+    const allParams = new Set();
+    Object.keys(normasDB[selectedMatrix][currentNorma]).forEach(spec => {
+      Object.keys(normasDB[selectedMatrix][currentNorma][spec]).forEach(method => {
+        normasDB[selectedMatrix][currentNorma][spec][method].forEach(param => {
+          allParams.add(param);
+        });
+      });
+    });
+    return Array.from(allParams).sort();
+  };
+
+  const getAvailableSpecifications = () => {
+    if (!selectedMatrix) return [];
+    const currentNorma = getCurrentNorma();
+    if (!currentNorma) return [];
+    return Object.keys(normasDB[selectedMatrix][currentNorma]);
   };
 
   return (
@@ -380,8 +424,9 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
               <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: '#1f2937' }}>
                 {step === 1 ? 'Seleccionar Matriz' : 
-                 step === 2 ? 'Seleccionar Especificaciones' :
-                 step === 3 ? 'Seleccionar Método de Referencia' : 'Seleccionar Parámetros'}
+                 step === 2 && shouldShowNormaStep() ? 'Seleccionar Norma' :
+                 step === 2 || (step === 3 && !shouldShowNormaStep()) ? 'Seleccionar Especificaciones' :
+                 (step === 3 && !shouldShowNormaStep()) || (step === 4 && shouldShowNormaStep()) ? 'Seleccionar Métodos de Referencia' : 'Seleccionar Parámetros'}
               </h3>
               <button
                 onClick={() => { setShowModal(false); resetModal(); }}
@@ -404,7 +449,16 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
                 {Object.keys(normasDB).map((matrix, index) => (
                   <div
                     key={index}
-                    onClick={() => { setSelectedMatrix(matrix); setStep(2); }}
+                    onClick={() => { 
+                      setSelectedMatrix(matrix);
+                      const normas = Object.keys(normasDB[matrix]);
+                      if (normas.length === 1) {
+                        setSelectedNorma(normas[0]);
+                        setStep(2);
+                      } else {
+                        setStep(2);
+                      }
+                    }}
                     style={{
                       padding: '1rem',
                       margin: '0.5rem 0',
@@ -423,18 +477,60 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
               </div>
             )}
 
-            {step === 2 && selectedMatrix && (
+            {step === 2 && selectedMatrix && shouldShowNormaStep() && (
               <div>
                 <div style={{ marginBottom: '1rem', color: '#6b7280', fontSize: '0.9rem' }}>
                   <span onClick={() => setStep(1)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
                     Matrices
                   </span> › {selectedMatrix}
                 </div>
-                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Especificaciones</h4>
-                {Object.keys(normasDB[selectedMatrix][Object.keys(normasDB[selectedMatrix])[0]]).map((spec, index) => (
+                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Normas</h4>
+                {getAvailableNormas().map((norma, index) => (
                   <div
                     key={index}
-                    onClick={() => { setSelectedSpecification(spec); setStep(3); }}
+                    onClick={() => { setSelectedNorma(norma); setStep(3); }}
+                    style={{
+                      padding: '1rem',
+                      margin: '0.5rem 0',
+                      backgroundColor: '#f9fafb',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      border: '1px solid #e5e7eb'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#f9fafb'}
+                  >
+                    {norma}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {((step === 2 && selectedMatrix && !shouldShowNormaStep()) || (step === 3 && selectedMatrix && shouldShowNormaStep())) && (
+              <div>
+                <div style={{ marginBottom: '1rem', color: '#6b7280', fontSize: '0.9rem' }}>
+                  <span onClick={() => setStep(1)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                    Matrices
+                  </span> › 
+                  {shouldShowNormaStep() ? (
+                    <>
+                      <span onClick={() => setStep(2)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                        {selectedMatrix}
+                      </span> › {getCurrentNorma()}
+                    </>
+                  ) : (
+                    selectedMatrix
+                  )}
+                </div>
+                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Especificaciones</h4>
+                {getAvailableSpecifications().map((spec, index) => (
+                  <div
+                    key={index}
+                    onClick={() => { 
+                      setSelectedSpecification(spec); 
+                      setStep(shouldShowNormaStep() ? 4 : 3);
+                    }}
                     style={{
                       padding: '1rem',
                       margin: '0.5rem 0',
@@ -453,54 +549,108 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
               </div>
             )}
 
-            {step === 3 && selectedMatrix && selectedSpecification && (
+            {((step === 3 && selectedMatrix && selectedSpecification && !shouldShowNormaStep()) || (step === 4 && selectedMatrix && selectedSpecification && shouldShowNormaStep())) && (
               <div>
                 <div style={{ marginBottom: '1rem', color: '#6b7280', fontSize: '0.9rem' }}>
                   <span onClick={() => setStep(1)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
                     Matrices
                   </span> › 
-                  <span onClick={() => setStep(2)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
-                    {selectedMatrix}
-                  </span> › {selectedSpecification}
+                  {shouldShowNormaStep() ? (
+                    <>
+                      <span onClick={() => setStep(2)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                        {selectedMatrix}
+                      </span> › 
+                      <span onClick={() => setStep(3)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                        {getCurrentNorma()}
+                      </span> › {selectedSpecification}
+                    </>
+                  ) : (
+                    <>
+                      <span onClick={() => setStep(2)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                        {selectedMatrix}
+                      </span> › {selectedSpecification}
+                    </>
+                  )}
                 </div>
-                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Métodos de Referencia</h4>
+                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Métodos de Referencia (Selecciona múltiples)</h4>
                 {getAvailableMethods().map((method, index) => (
                   <div
                     key={index}
-                    onClick={() => { setSelectedMethod(method); setStep(4); }}
                     style={{
-                      padding: '1rem',
-                      margin: '0.5rem 0',
-                      backgroundColor: '#f9fafb',
-                      borderRadius: '12px',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      border: '1px solid #e5e7eb'
+                      padding: '0.75rem',
+                      margin: '0.25rem 0',
+                      backgroundColor: selectedMethods.includes(method) ? '#e3f2fd' : '#f9fafb',
+                      borderRadius: '8px',
+                      border: selectedMethods.includes(method) ? '2px solid #2b91e7' : '1px solid #e5e7eb',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                      cursor: 'pointer'
                     }}
-                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
-                    onMouseLeave={(e) => e.target.style.backgroundColor = '#f9fafb'}
+                    onClick={() => handleMethodToggle(method)}
                   >
-                    {method}
+                    <input
+                      type="checkbox"
+                      checked={selectedMethods.includes(method)}
+                      onChange={() => handleMethodToggle(method)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <label style={{ cursor: 'pointer', fontSize: '0.9rem' }}>
+                      {method}
+                    </label>
                   </div>
                 ))}
+                <div style={{ marginTop: '2rem' }}>
+                  <button
+                    onClick={() => setStep(shouldShowNormaStep() ? 5 : 4)}
+                    disabled={selectedMethods.length === 0}
+                    style={{
+                      padding: '0.75rem 1.5rem',
+                      backgroundColor: selectedMethods.length > 0 ? '#2b91e7' : '#6c757d',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: selectedMethods.length > 0 ? 'pointer' : 'not-allowed',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    Continuar
+                  </button>
+                </div>
               </div>
             )}
 
-            {step === 4 && selectedMatrix && selectedSpecification && selectedMethod && (
+            {((step === 4 && selectedMatrix && selectedSpecification && selectedMethods.length > 0 && !shouldShowNormaStep()) || (step === 5 && selectedMatrix && selectedSpecification && selectedMethods.length > 0 && shouldShowNormaStep())) && (
               <div>
                 <div style={{ marginBottom: '1rem', color: '#6b7280', fontSize: '0.9rem' }}>
                   <span onClick={() => setStep(1)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
                     Matrices
                   </span> › 
-                  <span onClick={() => setStep(2)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
-                    {selectedMatrix}
-                  </span> › 
-                  <span onClick={() => setStep(3)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
-                    {selectedSpecification}
-                  </span> › {selectedMethod}
+                  {shouldShowNormaStep() ? (
+                    <>
+                      <span onClick={() => setStep(2)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                        {selectedMatrix}
+                      </span> › 
+                      <span onClick={() => setStep(3)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                        {getCurrentNorma()}
+                      </span> › 
+                      <span onClick={() => setStep(4)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                        {selectedSpecification}
+                      </span> › Métodos ({selectedMethods.length})
+                    </>
+                  ) : (
+                    <>
+                      <span onClick={() => setStep(2)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                        {selectedMatrix}
+                      </span> › 
+                      <span onClick={() => setStep(3)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                        {selectedSpecification}
+                      </span> › Métodos ({selectedMethods.length})
+                    </>
+                  )}
                 </div>
-                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Parámetros</h4>
-                {getAvailableParameters().map((parameter, index) => (
+                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Parámetros de {getCurrentNorma()}</h4>
+                {getAllParametersFromNorma().map((parameter, index) => (
                   <div
                     key={index}
                     style={{
@@ -562,7 +712,7 @@ const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
                     <h5 style={{ margin: '0 0 0.5rem 0', color: '#374151' }}>Selecciones agregadas:</h5>
                     {allSelections.map((sel, idx) => (
                       <div key={idx} style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.25rem' }}>
-                        {idx + 1}. {sel.matrix} - {sel.norma} - {sel.method} ({sel.parameters.length} parámetros)
+                        {idx + 1}. {sel.matrix} - {sel.norma} - {sel.methods.join(', ')} ({sel.parameters.length} parámetros)
                       </div>
                     ))}
                   </div>
