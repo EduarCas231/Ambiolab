@@ -1,172 +1,210 @@
 import React, { useState, useEffect } from 'react';
 
-const NormaAutocomplete = ({ value, onChange }) => {
+const NormaAutocomplete = ({ value, onChange, onParametersChange }) => {
   const [inputValue, setInputValue] = useState(value || '');
   const [showModal, setShowModal] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState(null);
-  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  const [selectedMatrix, setSelectedMatrix] = useState(null);
+  const [selectedSpecification, setSelectedSpecification] = useState(null);
+  const [selectedMethod, setSelectedMethod] = useState(null);
+  const [selectedParameters, setSelectedParameters] = useState([]);
+  const [allSelections, setAllSelections] = useState([]);
+  const [step, setStep] = useState(1);
 
   const normasDB = {
-    "AGUAS POTABLE - MUESTREO": {
-      "NOM-230-SSA1-2002": {
-        "Tabla 1 - Especificaciones sanitarias físicas": [
-          "Turbiedad - STANDARD METHODS 2130 24TH ED. 2023",
-          "Ph - STANDARD METHODS 4500-H⁺ 24TH ED. 2023",
-          "Color verdadero - STANDARD METHODS 2120 24TH ED. 2023"
-        ],
-        "Tabla 2 - Especificaciones sanitarias químicas": [
-          "Cianuros totales - STANDARD METHODS 4500 CN¯E 24TH ED. 2023",
-          "Dureza total como CaCO3 - STANDARD METHODS 2340 24TH ED. 2023",
-          "Fluoruros - STANDARD METHODS 4500 F 24TH ED. 2023",
-          "Nitrógeno amoniacal - STANDARD METHODS 4500-NH3 24TH ED. 2023",
-          "Nitrógeno de nitratos - NMX-AA-079-SCFI-2001 / STANDARD METHODS 4500-NO3¯ 24TH ED. 2023",
-          "Nitrógeno de nitritos - STANDARD METHODS 4500-NO2¯ 24TH ED. 2023",
-          "Sólidos disueltos totales - STANDARD METHODS 2540 24TH ED. 2023",
-          "Sulfatos - STANDARD METHODS 4500-SO4¯² 24TH ED. 2023",
-          "Sustancias Activas al azul de metileno - STANDARD METHODS 5540 24TH ED. 2023"
-        ],
-        "Tabla 4 - Especificaciones sanitarias de metales y metaloides": [
-          "Arsénico - NMX-AA-131/1-SCFI-2021",
-          "Bario",
-          "Aluminio",
-          "Cadmio",
-          "Cobre",
-          "Cromo total",
-          "Hierro",
-          "Manganeso",
-          "Níquel",
-          "Plomo",
-          "Selenio",
-          "MERCURIO"
-        ],
-        "Tabla 9 - Especificaciones sanitarias de residuales de la desinfección": [
-          "Cloro residual libre - STANDARD METHODS 4500-Cl 24TH ED. 2023 / NOM-201-SSA1-2015 A.3.10",
-          "Yodo residual libre - STANDARD METHODS 4500-I 24TH ED. 2023",
-          "Plata total - NMX-AA-131/1-SCFI-2021"
-        ]
+    "AGUA POTABLE": {
+      "NOM-127-SSA1-2021": {
+        "MUESTREO": {
+          "NOM-230-SSA1-2002": ["AGUAS POTABLE - MUESTREO"]
+        },
+        "Tabla 1 - Especificaciones sanitarias físicas": {
+          "STANDARD METHODS 2130 24TH ED. 2023": ["Turbiedad"],
+          "STANDARD METHODS 4500-H⁺ 24TH ED. 2023": ["Ph"],
+          "STANDARD METHODS 2120 24TH ED. 2023": ["Color verdadero"]
+        },
+        "Tabla 2 - Especificaciones sanitarias químicas": {
+          "NMX-AA-058-SCFI-2001 / STANDARD METHODS 4500 CN¯E 24TH ED. 2023": ["Cianuros totales"],
+          "STANDARD METHODS 2340 24TH ED. 2023": ["Dureza total como CaCO3"],
+          "STANDARD METHODS 4500 F 24TH ED. 2023": ["Fluoruros"],
+          "STANDARD METHODS 4500-NH3 24TH ED. 2023": ["Nitrógeno amoniacal"],
+          "NMX-AA-079-SCFI-2001 / STANDARD METHODS 4500-NO3¯ 24TH ED. 2023": ["Nitrógeno de nitratos"],
+          "STANDARD METHODS 4500-NO2¯ 24TH ED. 2023": ["Nitrógeno de nitritos"],
+          "STANDARD METHODS 2540 24TH ED. 2023": ["Sólidos disueltos totales"],
+          "STANDARD METHODS 4500-SO4¯² 24TH ED. 2023": ["Sulfatos"],
+          "NMX-AA-039-SCFI-2001 / STANDARD METHODS 5540 24TH ED. 2023": ["Sustancias Activas al azul de metileno"]
+        },
+        "Tabla 4 - Especificaciones sanitarias de metales y metaloides": {
+          "NMX-AA-131/1-SCFI-2021": ["Arsénico", "Bario", "Aluminio", "Cadmio", "Cobre", "Cromo total", "Hierro", "Manganeso", "Níquel", "Plomo", "Selenio", "MERCURIO"]
+        },
+        "Tabla 9 - Especificaciones sanitarias de residuales de la desinfección": {
+          "STANDARD METHODS 4500-Cl 24TH ED. 2023 / NOM-201-SSA1-2015 A.3.10": ["Cloro residual libre"],
+          "STANDARD METHODS 4500-I 24TH ED. 2023": ["Yodo residual libre"],
+          "NMX-AA-131/1-SCFI-2021": ["Plata total"]
+        },
+        "Tabla 6 - Especificaciones sanitarias microbiológicas": {
+          "-": ["E.coli o coliformes termotolerantes", "Giardia lamblia"]
+        },
+        "Tabla 7 - Especificaciones sanitarias de fitotoxinas": {
+          "-": ["Microcistina-LR"]
+        },
+        "Tabla 8 - Especificaciones sanitarias de radiactividad": {
+          "-": ["Radiactividad alfa", "Radiactividad beta"]
+        },
+        "Tabla 10 - Especificaciones sanitarias de subproductos de la desinfección - trihalometanos": {
+          "EPA 8260D 2018": ["Bromodiclorometano", "Bromoformo", "Cloroformo", "Dibromoclorometano"]
+        },
+        "Tabla 11 - Especificaciones sanitarias de subproductos de la desinfección - ácidos haloacéticos": {
+          "-": ["Ácido cloroacético", "Ácido dicloroacético", "Ácido tricloroacético"]
+        },
+        "Tabla 12 - Especificaciones sanitarias de subproductos de la desinfección - aniones": {
+          "-": ["Bromatos", "Cloratos", "Cloritos"]
+        },
+        "Tabla 13 - Especificaciones sanitarias de subproductos de la desinfección - carbonilos": {
+          "EPA 8315A": ["Formaldehído"]
+        },
+        "Tabla 14 - Especificaciones sanitarias de compuestos orgánicos sintéticos": {
+          "-": ["COMPUESTOS ORGÁNICOS HALOGENADOS ADSORBIBLES FIJOS (AOX)", "COMPUESTOS ORGÁNICOS NO HALOGENADOS", "COMPUESTOS ORGÁNICOS HALOGENADOS ADSORBIBLES PURGABLES (POX)"],
+          "EPA 8260D 2017": ["COMPUESTOS ORGÁNICOS VOLÁTILES NO HALOGENADOS (BENCENO)", "COMPUESTOS ORGÁNICOS VOLÁTILES NO HALOGENADOS (ESTIRENO)", "COMPUESTOS ORGÁNICOS VOLÁTILES NO HALOGENADOS (ETILBENCENO)", "COMPUESTOS ORGÁNICOS VOLÁTILES NO HALOGENADOS (TOLUENO)", "COMPUESTOS ORGÁNICOS VOLÁTILES NO HALOGENADOS (XILENOS)"]
+        },
+        "Tabla A.1 Límites permisibles de compuestos orgánicos halogenados adsorbibles fijos": {
+          "-": ["APÉNDICE A (VARIOS PARÁMETROS)"]
+        }
       }
     },
-    "AGUA RESIDUAL NOM-001-SEMARNAT-2021 Y NOM-001-SEMARNAT-1996": {
-      "MUESTREO": [
-        "AGUAS RESIDUALES - MUESTREO - NMX-AA-003-1980",
-        "CUERPOS RECEPTORES - MUESTREO - NMX-AA-014-1980"
-      ],
-      "CONTAMINANTES BÁSICOS": [
-        "TEMPERATURA - NMX-AA-007-SCFI-2013",
-        "PH - NMX-AA-008-SCFI-2016",
-        "MATERIA FLOTANTE - NMX-AA-006-SCFI-2010",
-        "CONDUCTIVIDAD - NMX-AA-093-SCFI-2018",
-        "NITRATOS - NMX-AA-079-SCFI-2001",
-        "NITRITOS - NMX-AA-099-SCFI-2021",
-        "NITRÓGENO TOTAL KJELDAHL - NMX-AA-026-SCFI-2010",
-        "SÓLIDOS SUSPENDIDOS TOTALES - NMX-AA-034-SCFI-2015",
-        "SÓLIDOS SEDIMENTABLES - NMX-AA-004-SCFI-2013",
-        "FOSFORO TOTAL - NMX-AA-029-SCFI-2001",
-        "GRASAS Y ACEITES - NMX-AA-005-SCFI-2013",
-        "DEMANDA BIOQUIMICA DE OXÍGENO - NMX-AA-028-SCFI-2021",
-        "COLOR VERDADERO - NMX-AA-017-SCFI-2021",
-        "DEMANDA QUIMICA DE OXÍGENO - NMX-AA-030/2-SCFI-2011",
-        "CLORUROS - NMX-AA-073-SCFI-2001",
-        "CARBONO ORGÁNICO TOTAL - (NMX-AA-187-SCFI-2021)",
-        "HUEVOS DE HELMINTO - NMX-AA-113-SCFI-2012",
-        "E. COLI - NMX-AA-042-SCFI-2015",
-        "COLIFORMES FECALES - NMX-AA-042-SCFI-2015",
-        "ENTEROCOCOS FECALES - NMX-AA-120-SCFI-2016 / NMX-AA-167-SCFI-2017",
-        "TOXICIDAD AGUDA (VIBRIO FISHERI) - NMX-AA-112-SCFI-2017"
-      ],
-      "METALES Y METALOIDES": [
-        "CIANURO - NMX-AA-058-SCFI-2001",
-        "ARSÉNICO - NMX-AA-131/1-SCFI-2021",
-        "CADMIO - NMX-AA-131/1-SCFI-2021",
-        "COBRE - NMX-AA-131/1-SCFI-2021",
-        "CROMO - NMX-AA-131/1-SCFI-2021",
-        "NIQUEL - NMX-AA-131/1-SCFI-2021",
-        "PLOMO - NMX-AA-131/1-SCFI-2021",
-        "ZINC - NMX-AA-131/1-SCFI-2021",
-        "MERCURIO - NMX-AA-131/1-SCFI-2021"
-      ]
-    },
-    "AGUA RESIDUAL NOM-002-SEMARNAT-1996": {
-      "MUESTREO": [
-        "AGUAS RESIDUALES - MUESTREO - NMX-AA-003-1980"
-      ],
-      "CONTAMINANTES BÁSICOS": [
-        "TEMPERATURA - NMX-AA-007-SCFI-2013",
-        "PH - NMX-AA-008-SCFI-2016",
-        "MATERIA FLOTANTE - NMX-AA-006-SCFI-2010",
-        "CONDUCTIVIDAD - NMX-AA-093-SCFI-2018",
-        "SÓLIDOS SUSPENDIDOS TOTALES - NMX-AA-034-SCFI-2015",
-        "SÓLIDOS SEDIMENTABLES - NMX-AA-004-SCFI-2013",
-        "GRASAS Y ACEITES - NMX-AA-005-SCFI-2013",
-        "DEMANDA BIOQUIMICA DE OXÍGENO - NMX-AA-028-SCFI-2021",
-        "DEMANDA QUIMICA DE OXÍGENO - NMX-AA-030/2-SCFI-2011"
-      ],
-      "METALES Y METALOIDES": [
-        "CIANURO - NMX-AA-058-SCFI-2001",
-        "ARSÉNICO - NMX-AA-131/1-SCFI-2021",
-        "CADMIO - NMX-AA-131/1-SCFI-2021",
-        "COBRE - NMX-AA-131/1-SCFI-2021",
-        "NIQUEL - NMX-AA-131/1-SCFI-2021",
-        "PLOMO - NMX-AA-131/1-SCFI-2021",
-        "ZINC - NMX-AA-131/1-SCFI-2021",
-        "MERCURIO - NMX-AA-131/1-SCFI-2021",
-        "CROMO HEXAVALENTE - NMX-AA-044-SCFI-2014"
-      ]
-    },
-    "AGUA RESIDUAL NOM-003-SEMARNAT-1996": {
-      "MUESTREO": [
-        "AGUAS RESIDUALES - MUESTREO - NMX-AA-003-1980",
-        "CUERPOS RECEPTORES - MUESTREO - NMX-AA-014-1980"
-      ],
-      "CONTAMINANTES BÁSICOS": [
-        "TEMPERATURA - NMX-AA-007-SCFI-2013",
-        "PH - NMX-AA-008-SCFI-2016",
-        "MATERIA FLOTANTE - NMX-AA-006-SCFI-2010",
-        "CONDUCTIVIDAD - NMX-AA-093-SCFI-2018",
-        "SÓLIDOS SUSPENDIDOS TOTALES - NMX-AA-034-SCFI-2015",
-        "GRASAS Y ACEITES - NMX-AA-005-SCFI-2013",
-        "DEMANDA BIOQUIMICA DE OXÍGENO - NMX-AA-028-SCFI-2021",
-        "DEMANDA QUIMICA DE OXÍGENO - NMX-AA-030/2-SCFI-2011",
-        "HUEVOS DE HELMINTO - NMX-AA-113-SCFI-2012",
-        "COLIFORMES FECALES Y TOTALES - NMX-AA-042-SCFI-2015"
-      ],
-      "METALES Y METALOIDES": [
-        "CIANURO - NMX-AA-058-SCFI-2001",
-        "ARSÉNICO - NMX-AA-131/1-SCFI-2021",
-        "CADMIO - NMX-AA-131/1-SCFI-2021",
-        "COBRE - NMX-AA-131/1-SCFI-2021",
-        "CROMO - NMX-AA-131/1-SCFI-2021",
-        "NIQUEL - NMX-AA-131/1-SCFI-2021",
-        "PLOMO - NMX-AA-131/1-SCFI-2021",
-        "ZINC - NMX-AA-131/1-SCFI-2021",
-        "MERCURIO - NMX-AA-131/1-SCFI-2021"
-      ]
+    "AGUA RESIDUAL": {
+      "NOM-001-SEMARNAT-2021 / NOM 001-SEMARNAT-1996": {
+        "MUESTREO": {
+          "NMX-AA-003-1980": ["AGUAS RESIDUALES - MUESTREO"],
+          "NMX-AA-014-1980": ["CUERPOS RECEPTORES - MUESTREO"]
+        },
+        "CONTAMINANTES BÁSICOS": {
+          "NMX-AA-007-SCFI-2013": ["TEMPERATURA"],
+          "NMX-AA-008-SCFI-2016": ["PH"],
+          "NMX-AA-006-SCFI-2010": ["MATERIA FLOTANTE"],
+          "NMX-AA-093-SCFI-2018": ["CONDUCTIVIDAD"],
+          "NMX-AA-079-SCFI-2001": ["NITRATOS"],
+          "NMX-AA-099-SCFI-2021": ["NITRITOS"],
+          "NMX-AA-026-SCFI-2010": ["NITRÓGENO TOTAL KJELDAHL"],
+          "NMX-AA-034-SCFI-2015": ["SÓLIDOS SUSPENDIDOS TOTALES"],
+          "NMX-AA-004-SCFI-2013": ["SÓLIDOS SEDIMENTABLES"],
+          "NMX-AA-029-SCFI-2001": ["FOSFORO TOTAL"],
+          "NMX-AA-005-SCFI-2013": ["GRASAS Y ACEITES"],
+          "NMX-AA-028-SCFI-2021": ["DEMANDA BIOQUIMICA DE OXÍGENO"],
+          "NMX-AA-017-SCFI-2021": ["COLOR VERDADERO"],
+          "NMX-AA-030/2-SCFI-2011": ["DEMANDA QUIMICA DE OXÍGENO"],
+          "NMX-AA-073-SCFI-2001": ["CLORUROS"],
+          "(NMX-AA-187-SCFI-2021)": ["CARBONO ORGÁNICO TOTAL"],
+          "NMX-AA-113-SCFI-2012": ["HUEVOS DE HELMINTO"],
+          "NMX-AA-042-SCFI-2015": ["E. COLI", "COLIFORMES FECALES"],
+          "NMX-AA-120-SCFI-2016 / NMX-AA-167-SCFI-2017": ["ENTEROCOCOS FECALES"],
+          "NMX-AA-112-SCFI-2017": ["TOXICIDAD AGUDA (VIBRIO FISHERI)"]
+        },
+        "METALES Y METALOIDES": {
+          "NMX-AA-058-SCFI-2001": ["CIANURO"],
+          "NMX-AA-131/1-SCFI-2021": ["ARSÉNICO", "CADMIO", "COBRE", "CROMO", "NIQUEL", "PLOMO", "ZINC", "MERCURIO"]
+        }
+      },
+      "NOM-002-SEMARNAT-1996": {
+        "MUESTREO": {
+          "NMX-AA-003-1980": ["AGUAS RESIDUALES - MUESTREO"]
+        },
+        "CONTAMINANTES BÁSICOS": {
+          "NMX-AA-007-SCFI-2013": ["TEMPERATURA"],
+          "NMX-AA-008-SCFI-2016": ["PH"],
+          "NMX-AA-006-SCFI-2010": ["MATERIA FLOTANTE"],
+          "NMX-AA-093-SCFI-2018": ["CONDUCTIVIDAD"],
+          "NMX-AA-034-SCFI-2015": ["SÓLIDOS SUSPENDIDOS TOTALES"],
+          "NMX-AA-004-SCFI-2013": ["SÓLIDOS SEDIMENTABLES"],
+          "NMX-AA-005-SCFI-2013": ["GRASAS Y ACEITES"],
+          "NMX-AA-028-SCFI-2021": ["DEMANDA BIOQUIMICA DE OXÍGENO"],
+          "NMX-AA-030/2-SCFI-2011": ["DEMANDA QUIMICA DE OXÍGENO"]
+        },
+        "METALES Y METALOIDES": {
+          "NMX-AA-058-SCFI-2001": ["CIANURO"],
+          "NMX-AA-131/1-SCFI-2021": ["ARSÉNICO", "CADMIO", "COBRE", "NIQUEL", "PLOMO", "ZINC", "MERCURIO"],
+          "NMX-AA-044-SCFI-2014": ["CROMO HEXAVALENTE"]
+        }
+      }
     },
     "AGUA CONGÉNITA": {
-      "MUESTREO": [
-        "AGUAS CONGÉNITAS - MUESTREO - MÉTODO INTERNO"
-      ],
-      "CROMATOGRAFICOS": [
-        "GASOLINA RANGO ORGÁNICO (HFL) - EPA 8015D 2003",
-        "DIÉSEL RANGO ORGÁNICO (HFM) - EPA 8015D 2003"
-      ],
-      "FISICOQUÍMICOS": [
-        "HIDROCARBUROS DE FRACCIÓN PESADA (HFP) - EPA METHOD 1664B 2010",
-        "SOLIDOS DISUELTOS TOTALES - NOM-143-SEMARNAT-2003 ANEXO 2"
-      ]
+      "NOM-143-SEMARNAT-2003": {
+        "MUESTREO": {
+          "MÉTODO INTERNO": ["AGUAS CONGÉNITAS - MUESTREO"]
+        },
+        "CROMATOGRAFICOS": {
+          "EPA 8015D 2003": ["GASOLINA RANGO ORGÁNICO (HFL)", "DIÉSEL RANGO ORGÁNICO (HFM)"]
+        },
+        "FISICOQUÍMICOS": {
+          "EPA METHOD 1664B 2010": ["HIDROCARBUROS DE FRACCIÓN PESADA (HFP)"],
+          "NOM-143-SEMARNAT-2003 ANEXO 2": ["SOLIDOS DISUELTOS TOTALES"]
+        }
+      }
     },
     "AMBIENTE LABORAL": {
-      "AMBIENTE LABORAL": [
-        "Iluminación - NOM-025-STPS-2008",
-        "Ruido laboral SONOMETRÍA - NOM-011-STPS-2001",
-        "Ruido laboral DOSIMETRÍA - NOM-011-STPS-2001",
-        "Tierras físicas (CONTINUIDAD) - NOM-022-STPS-2015",
-        "Tierras físicas (ESTUDIO) - NOM-022-STPS-2015",
-        "Condiciones térmicas (Elevadas) - NOM-015-STPS-2001",
-        "Condiciones térmicas (Abatidas) - NOM-015-STPS-2001"
-      ]
+      "NA": {
+        "AMBIENTE LABORAL": {
+          "NOM-025-STPS-2008": ["Condiciones de Iluminación"],
+          "NOM-011-STPS-2001": ["Ruido laboral SONOMETRÍA", "Ruido laboral DOSIMETRÍA"],
+          "NOM-022-STPS-2015": ["Tierras físicas (CONTINUIDAD)", "Tierras físicas (ESTUDIO)"],
+          "NOM-015-STPS-2001": ["Condiciones térmicas (Elevadas)", "Condiciones térmicas (Abatidas)"]
+        }
+      }
+    },
+    "FUENTES FIJAS": {
+      "NOM-081-SEMARNAT-1994": {
+        "RUIDO PERIMETRAL": {
+          "NOM-081-SEMARNAT-1994": ["Ruido perimetral DIURNO", "Ruido perimetral NOCTURNO", "Ruido perimetral MIXTO"]
+        }
+      },
+      "NOM-038-SEMARNAT-1993": {
+        "CALIDAD DEL AIRE": {
+          "NOM-038-SEMARNAT-1993": ["Determinación de SO2"]
+        }
+      },
+      "NOM-037-SEMARNAT-1993": {
+        "CALIDAD DEL AIRE": {
+          "NOM-037-SEMARNAT-1993": ["Determinación de NO, NO2 Y NOX"]
+        }
+      },
+      "NOM-036-SEMARNAT-1993": {
+        "CALIDAD DEL AIRE": {
+          "NOM-036-SEMARNAT-1993": ["Determinación de O3"]
+        }
+      },
+      "NOM-034-SEMARNAT-2011": {
+        "CALIDAD DEL AIRE": {
+          "NOM-034-SEMARNAT-2011": ["Determinación de CO"]
+        }
+      },
+      "CFR 40 PARTE 50, APÉNDICE J": {
+        "CALIDAD DEL AIRE": {
+          "CFR 40 PARTE 50, APÉNDICE J / TEOM® 1405 Ambient Particulate Monitor": ["Determinación de PM10"]
+        }
+      },
+      "CFR 40 PARTE 50, APÉNDICE L": {
+        "CALIDAD DEL AIRE": {
+          "CFR 40 PARTE 50, APÉNDICE L / TEOM® 1405-F Ambient Particulate Monitor": ["Determinación de PM2.5"]
+        }
+      },
+      "NA": {
+        "CONDICIONES AMBIENTALES": {
+          "NA": ["CONDICIONES AMBIENTALES"]
+        }
+      }
+    },
+    "OTROS": {
+      "-": {
+        "ORGANOLEPTICOS": {
+          "STANDARD METHODS 2150 24TH ED. 2023": ["OLOR"],
+          "STANDARD METHODS 2160 24TH ED. 2023": ["SABOR"]
+        },
+        "FISICOQUÍMICOS": {
+          "NMX-AA-050-SCFI-2001": ["FENOLES O COMPUESTOS FENOLICOS"]
+        }
+      }
     }
   };
+
+  
 
   useEffect(() => {
     setInputValue(value || '');
@@ -180,14 +218,102 @@ const NormaAutocomplete = ({ value, onChange }) => {
     }
   };
 
-  const selectNorma = (norma) => {
-    setInputValue(norma);
+  const resetSelection = () => {
+    setSelectedMatrix(null);
+    setSelectedSpecification(null);
+    setSelectedMethod(null);
+    setSelectedParameters([]);
+    setStep(1);
+  };
+
+  const resetModal = () => {
+    resetSelection();
+    setAllSelections([]);
+  };
+
+  const handleParameterToggle = (parameter) => {
+    setSelectedParameters(prev => 
+      prev.includes(parameter) 
+        ? prev.filter(p => p !== parameter)
+        : [...prev, parameter]
+    );
+  };
+
+  const addSelection = () => {
+    const normaGeneral = Object.keys(normasDB[selectedMatrix])[0];
+    const newSelection = {
+      matrix: selectedMatrix,
+      norma: normaGeneral,
+      method: selectedMethod,
+      parameters: selectedParameters
+    };
+    setAllSelections(prev => [...prev, newSelection]);
+    resetSelection();
+  };
+
+  const addAndFinalize = () => {
+    const normaGeneral = Object.keys(normasDB[selectedMatrix])[0];
+    const newSelection = {
+      matrix: selectedMatrix,
+      norma: normaGeneral,
+      method: selectedMethod,
+      parameters: selectedParameters
+    };
+    const updatedSelections = [...allSelections, newSelection];
+    
+    const allParts = [];
+    const allParams = [];
+    
+    updatedSelections.forEach(selection => {
+      const parts = [selection.matrix, selection.norma, selection.method];
+      allParts.push(parts.filter(Boolean).join(' - '));
+      allParams.push(...selection.parameters);
+    });
+    
+    const finalValue = allParts.join(' | ');
+    setInputValue(finalValue);
     if (onChange) {
-      onChange({ target: { name: 'norma', value: norma } });
+      onChange({ target: { name: 'norma', value: finalValue } });
+    }
+    if (onParametersChange) {
+      onParametersChange(allParams.join(', '));
     }
     setShowModal(false);
-    setSelectedCategory(null);
-    setSelectedSubcategory(null);
+    resetModal();
+  };
+
+  const generateFinalValue = () => {
+    const allParts = [];
+    const allParams = [];
+    
+    allSelections.forEach(selection => {
+      const parts = [selection.matrix, selection.norma, selection.method];
+      allParts.push(parts.filter(Boolean).join(' - '));
+      allParams.push(...selection.parameters);
+    });
+    
+    const finalValue = allParts.join(' | ');
+    setInputValue(finalValue);
+    if (onChange) {
+      onChange({ target: { name: 'norma', value: finalValue } });
+    }
+    if (onParametersChange) {
+      onParametersChange(allParams.join(', '));
+    }
+    setShowModal(false);
+    resetModal();
+  };
+
+  const getAvailableMethods = () => {
+    if (!selectedMatrix || !selectedSpecification) return [];
+    const normaGeneral = Object.keys(normasDB[selectedMatrix])[0];
+    return Object.keys(normasDB[selectedMatrix][normaGeneral][selectedSpecification]);
+  };
+
+  const getAvailableParameters = () => {
+    if (!selectedMatrix || !selectedSpecification || !selectedMethod) return [];
+    const normaGeneral = Object.keys(normasDB[selectedMatrix])[0];
+    return normasDB[selectedMatrix][normaGeneral][selectedSpecification][selectedMethod] || [];
   };
 
   return (
@@ -212,7 +338,7 @@ const NormaAutocomplete = ({ value, onChange }) => {
       />
       <button
         type="button"
-        onClick={() => setShowModal(true)}
+        onClick={() => { setShowModal(true); resetSelection(); }}
         style={{
           padding: '1rem 1.5rem',
           backgroundColor: '#2b91e7',
@@ -252,9 +378,13 @@ const NormaAutocomplete = ({ value, onChange }) => {
             boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)'
           }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-              <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: '#1f2937' }}>Seleccionar Norma</h3>
+              <h3 style={{ margin: 0, fontSize: '1.5rem', fontWeight: '700', color: '#1f2937' }}>
+                {step === 1 ? 'Seleccionar Matriz' : 
+                 step === 2 ? 'Seleccionar Especificaciones' :
+                 step === 3 ? 'Seleccionar Método de Referencia' : 'Seleccionar Parámetros'}
+              </h3>
               <button
-                onClick={() => setShowModal(false)}
+                onClick={() => { setShowModal(false); resetModal(); }}
                 style={{
                   background: 'none',
                   border: 'none',
@@ -268,13 +398,13 @@ const NormaAutocomplete = ({ value, onChange }) => {
               </button>
             </div>
 
-            {!selectedCategory ? (
+            {step === 1 && (
               <div>
-                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Categorías</h4>
-                {Object.keys(normasDB).map((category, index) => (
+                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Matrices</h4>
+                {Object.keys(normasDB).map((matrix, index) => (
                   <div
                     key={index}
-                    onClick={() => setSelectedCategory(category)}
+                    onClick={() => { setSelectedMatrix(matrix); setStep(2); }}
                     style={{
                       padding: '1rem',
                       margin: '0.5rem 0',
@@ -287,22 +417,24 @@ const NormaAutocomplete = ({ value, onChange }) => {
                     onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
                     onMouseLeave={(e) => e.target.style.backgroundColor = '#f9fafb'}
                   >
-                    {category}
+                    {matrix}
                   </div>
                 ))}
               </div>
-            ) : !selectedSubcategory ? (
+            )}
+
+            {step === 2 && selectedMatrix && (
               <div>
                 <div style={{ marginBottom: '1rem', color: '#6b7280', fontSize: '0.9rem' }}>
-                  <span onClick={() => setSelectedCategory(null)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
-                    Categorías
-                  </span> › {selectedCategory}
+                  <span onClick={() => setStep(1)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                    Matrices
+                  </span> › {selectedMatrix}
                 </div>
-                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Subcategorías</h4>
-                {Object.keys(normasDB[selectedCategory]).map((subcategory, index) => (
+                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Especificaciones</h4>
+                {Object.keys(normasDB[selectedMatrix][Object.keys(normasDB[selectedMatrix])[0]]).map((spec, index) => (
                   <div
                     key={index}
-                    onClick={() => setSelectedSubcategory(subcategory)}
+                    onClick={() => { setSelectedSpecification(spec); setStep(3); }}
                     style={{
                       padding: '1rem',
                       margin: '0.5rem 0',
@@ -315,71 +447,125 @@ const NormaAutocomplete = ({ value, onChange }) => {
                     onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
                     onMouseLeave={(e) => e.target.style.backgroundColor = '#f9fafb'}
                   >
-                    {subcategory}
+                    {spec}
                   </div>
                 ))}
               </div>
-            ) : (
+            )}
+
+            {step === 3 && selectedMatrix && selectedSpecification && (
               <div>
                 <div style={{ marginBottom: '1rem', color: '#6b7280', fontSize: '0.9rem' }}>
-                  <span onClick={() => setSelectedCategory(null)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
-                    Categorías
+                  <span onClick={() => setStep(1)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                    Matrices
                   </span> › 
-                  <span onClick={() => setSelectedSubcategory(null)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
-                    {selectedCategory}
-                  </span> › {selectedSubcategory}
+                  <span onClick={() => setStep(2)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                    {selectedMatrix}
+                  </span> › {selectedSpecification}
                 </div>
-                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Normas</h4>
-                {Array.isArray(normasDB[selectedCategory][selectedSubcategory]) ? (
-                  normasDB[selectedCategory][selectedSubcategory].map((norma, index) => (
-                    <div
-                      key={index}
-                      onClick={() => selectNorma(norma)}
-                      style={{
-                        padding: '0.75rem',
-                        margin: '0.25rem 0',
-                        backgroundColor: '#f9fafb',
-                        borderRadius: '8px',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        border: '1px solid #e5e7eb',
-                        fontSize: '0.9rem'
-                      }}
-                      onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
-                      onMouseLeave={(e) => e.target.style.backgroundColor = '#f9fafb'}
-                    >
-                      {norma}
-                    </div>
-                  ))
-                ) : (
-                  Object.entries(normasDB[selectedCategory][selectedSubcategory]).map(([tabla, normas], index) => (
-                    <div key={index} style={{ marginBottom: '1.5rem' }}>
-                      <div style={{ fontWeight: '600', margin: '1rem 0 0.5rem 0', color: '#374151', fontSize: '1rem' }}>
-                        {tabla}
+                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Métodos de Referencia</h4>
+                {getAvailableMethods().map((method, index) => (
+                  <div
+                    key={index}
+                    onClick={() => { setSelectedMethod(method); setStep(4); }}
+                    style={{
+                      padding: '1rem',
+                      margin: '0.5rem 0',
+                      backgroundColor: '#f9fafb',
+                      borderRadius: '12px',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      border: '1px solid #e5e7eb'
+                    }}
+                    onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
+                    onMouseLeave={(e) => e.target.style.backgroundColor = '#f9fafb'}
+                  >
+                    {method}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {step === 4 && selectedMatrix && selectedSpecification && selectedMethod && (
+              <div>
+                <div style={{ marginBottom: '1rem', color: '#6b7280', fontSize: '0.9rem' }}>
+                  <span onClick={() => setStep(1)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                    Matrices
+                  </span> › 
+                  <span onClick={() => setStep(2)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                    {selectedMatrix}
+                  </span> › 
+                  <span onClick={() => setStep(3)} style={{ cursor: 'pointer', color: '#2b91e7' }}>
+                    {selectedSpecification}
+                  </span> › {selectedMethod}
+                </div>
+                <h4 style={{ color: '#374151', marginBottom: '1rem' }}>Parámetros</h4>
+                {getAvailableParameters().map((parameter, index) => (
+                  <div
+                    key={index}
+                    style={{
+                      padding: '0.75rem',
+                      margin: '0.25rem 0',
+                      backgroundColor: '#f9fafb',
+                      borderRadius: '8px',
+                      border: '1px solid #e5e7eb',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem'
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selectedParameters.includes(parameter)}
+                      onChange={() => handleParameterToggle(parameter)}
+                      style={{ cursor: 'pointer' }}
+                    />
+                    <label style={{ cursor: 'pointer', fontSize: '0.9rem' }}>
+                      {parameter}
+                    </label>
+                  </div>
+                ))}
+                <div style={{ marginTop: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                  <button
+                    onClick={addSelection}
+                    disabled={selectedParameters.length === 0}
+                    style={{
+                      padding: '0.75rem 1.5rem',
+                      backgroundColor: selectedParameters.length > 0 ? '#2b91e7' : '#6c757d',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: selectedParameters.length > 0 ? 'pointer' : 'not-allowed',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    Agregar y Seleccionar Otra
+                  </button>
+                  <button
+                    onClick={addAndFinalize}
+                    disabled={selectedParameters.length === 0}
+                    style={{
+                      padding: '0.75rem 1.5rem',
+                      backgroundColor: selectedParameters.length > 0 ? '#28a745' : '#6c757d',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: selectedParameters.length > 0 ? 'pointer' : 'not-allowed',
+                      fontSize: '0.9rem'
+                    }}
+                  >
+                    Finalizar
+                  </button>
+                </div>
+                {allSelections.length > 0 && (
+                  <div style={{ marginTop: '1rem', padding: '1rem', backgroundColor: '#f0f9ff', borderRadius: '8px' }}>
+                    <h5 style={{ margin: '0 0 0.5rem 0', color: '#374151' }}>Selecciones agregadas:</h5>
+                    {allSelections.map((sel, idx) => (
+                      <div key={idx} style={{ fontSize: '0.85rem', color: '#6b7280', marginBottom: '0.25rem' }}>
+                        {idx + 1}. {sel.matrix} - {sel.norma} - {sel.method} ({sel.parameters.length} parámetros)
                       </div>
-                      {normas.map((norma, idx) => (
-                        <div
-                          key={idx}
-                          onClick={() => selectNorma(norma)}
-                          style={{
-                            padding: '0.75rem',
-                            margin: '0.25rem 0',
-                            marginLeft: '1rem',
-                            backgroundColor: '#f9fafb',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            transition: 'all 0.2s',
-                            borderLeft: '3px solid #2b91e7',
-                            fontSize: '0.85rem'
-                          }}
-                          onMouseEnter={(e) => e.target.style.backgroundColor = '#f3f4f6'}
-                          onMouseLeave={(e) => e.target.style.backgroundColor = '#f9fafb'}
-                        >
-                          {norma}
-                        </div>
-                      ))}
-                    </div>
-                  ))
+                    ))}
+                  </div>
                 )}
               </div>
             )}

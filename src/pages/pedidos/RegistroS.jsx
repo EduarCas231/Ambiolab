@@ -97,6 +97,7 @@ const RegistroS = () => {
             <NormaAutocomplete 
               value={formData.norma}
               onChange={handleChange}
+              onParametersChange={(params) => setFormData(prev => ({ ...prev, parametros: params }))}
             />
           </div>
 
